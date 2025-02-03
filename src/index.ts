@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import express, { Request, Response, Express, NextFunction } from "express";
 import { errorMiddleware, successMiddleware } from "./util/middleware.js";
+import mainRouter from "./routes/route.index.js";
 
 dotenv.config();
 
@@ -19,9 +20,8 @@ app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형
 
 app.use(successMiddleware);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
-});
+app.use("/api/v1", mainRouter);
+
 app.use(errorMiddleware);
 
 app.listen(port, () => {
