@@ -1,10 +1,9 @@
 ---
-name: 이슈 생성 템플릿
-about: 이슈 생성 템플릿
-title: ''
-labels: ''
-assignees: ''
-
+name: Feature request
+about: Suggest an idea for this project
+title: ""
+labels: ""
+assignees: ""
 ---
 
 ## Description
@@ -12,6 +11,7 @@ assignees: ''
 > 추가하려는 기능에 대해 간결하게 설명해주세요
 
 ## To-do
+
 - [ ] TODO
 - [ ] TODO
 - [ ] TODO
