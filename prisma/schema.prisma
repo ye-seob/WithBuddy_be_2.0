@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id         BigInt  @id @default(autoincrement())
+  name       String  @db.VarChar(255)
+  studentId  BigInt  @map("student_id")
+  email      String  @db.VarChar(255)
+  pin        String  @db.VarChar(255)
+  major      String  @db.VarChar(255)
+
+  @@map("user")
+}
+
+model PersonalMatch {
+  id        BigInt    @id @default(autoincrement())
+  seniorId  BigInt    @map("senior_id")
+  juniorId  BigInt    @map("junior_id")
+  matchedAt DateTime  @db.Date
+
+  @@map("personal_match")
+}
