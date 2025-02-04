@@ -4,11 +4,12 @@
   "description": "WithBuddy 백엔드 2.0",
   "type": "module",
   "scripts": {
-    "dev": "nodemon -e js,json,prisma,ts --exec tsx src/index.ts",
+    "dev": "nodemon -e js,json,prisma,ts --exec \"prisma generate && tsx src/index.ts\"",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@prisma/client": "^6.3.1",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
