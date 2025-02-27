@@ -9,10 +9,10 @@ datasource db {
 
 
 model User {
-  userId     BigInt  @id @default(autoincrement())
+  userId     Int    @id @default(autoincrement()) @map("user_id")
   name       String  
   pin        String  
-  studentId  BigInt  @map("student_id")
+  studentId  Int    @map("student_id")
   email      String  
   kakaoId    String? @map("kakao_id")
   instaId    String? @map("insta_id")
@@ -23,12 +23,13 @@ model User {
 }
 
 model Department {
-  departmentId   BigInt  @id @default(autoincrement())
-  userId         BigInt  
+  departmentId   Int  @id @default(autoincrement()) @map("department_id")
+  
   departmentName String  @map("department_name") 
   studentCount   Int     @map("student_count")  @default(0)
 
   user           User    @relation(fields: [userId], references: [userId])
+  userId         Int   @map("user_id")
 
   @@map("department")
 }

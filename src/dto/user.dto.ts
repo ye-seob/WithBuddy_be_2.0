@@ -11,9 +11,6 @@ export interface SignupDTO {
 }
 
 export const toSignupDTO = (body: any): SignupDTO => {
-  if (!body.userId) {
-    throw new InvalidInputError("잘못된 토큰 값입니다.", "입력 값: 없음");
-  }
   if (!body.name) {
     throw new InvalidInputError("이름이 누락되었습니다.", "입력 값: 없음");
   }
