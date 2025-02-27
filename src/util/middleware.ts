@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "./jwt.js";
 import { InvalidInputError } from "./error.js";
+
 declare global {
   namespace Express {
     interface Response {
@@ -51,6 +52,7 @@ export const successMiddleware = (
   next();
 };
 
+// 에러 응답을 처리 미들웨어
 export const errorMiddleware = (
   err: any,
   req: Request,

@@ -1,12 +1,10 @@
-import dotenv from "dotenv";
 import cors from "cors";
-import express, { Request, Response, Express, NextFunction } from "express";
+import express from "express";
 import { errorMiddleware, successMiddleware } from "./util/middleware.js";
 import mainRouter from "./routes/route.index.js";
 
-dotenv.config();
-
 const app = express();
+
 const port = process.env.PORT;
 
 app.use(
