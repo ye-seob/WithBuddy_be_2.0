@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { dummyService } from "../service/dummy.service.js";
+import { createUserService } from "../service/user.service.js";
 import { StatusCodes } from "http-status-codes";
 
 export const signupController = async (
@@ -7,11 +7,10 @@ export const signupController = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("더미 컨트롤러 실행됨");
   try {
-    const dummyData: string = req.body.dummy;
+    const { name, studentId, email, pin } = req.body;
 
-    const dummy = await dummyService(dummyData);
+    const dummy = await createUserService({ name, studentId, email, pin });
 
     res.status(StatusCodes.OK).success(dummy);
   } catch (error) {

@@ -9,9 +9,9 @@ datasource db {
 
 
 model User {
-  id         BigInt  @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   name       String  @db.VarChar(255)
-  studentId  BigInt  @map("student_id")
+  studentId  Int     @map("student_id")
   email      String  @db.VarChar(255)
   pin        String  @db.VarChar(255)
 
