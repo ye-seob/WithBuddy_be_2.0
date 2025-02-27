@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { UserService } from "../service/user.service.js";
 import { StatusCodes } from "http-status-codes";
 import { toLoginDTO, toSignupDTO } from "../dto/user.dto.js";
+import { generateAccessToken } from "../util/jwt.js";
 
 const userService = new UserService();
 
@@ -32,7 +33,18 @@ export const loginController = async (
 
     const loginUser = await userService.login(loginData);
 
-    res.status(StatusCodes.OK).success(loginUser);
+    const accessToken = generateAccessToken({
+      id: loginUser.userId,
+      studentId: loginUser.studentId,
+    });
+
+    const refreshToken = generateAccessToken({
+      id: loginUser.userId,
+      studentId: loginUser.studentId,
+    });
+    res
+      .status(StatusCodes.OK)
+      .success({ loginUser, accessToken, refreshToken });
   } catch (error) {
     console.error(error);
     next(error);

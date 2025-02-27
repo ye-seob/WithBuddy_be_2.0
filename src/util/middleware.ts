@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import { verifyToken } from "./jwt.js";
+import { InvalidInputError } from "./error.js";
 
 declare global {
   namespace Express {
@@ -13,6 +15,10 @@ declare global {
         reason?: string | null;
         data?: any;
       }) => Response;
+    }
+
+    export interface Request {
+      user?: any;
     }
   }
 }
@@ -46,6 +52,7 @@ export const successMiddleware = (
   next();
 };
 
+// 에러 응답을 처리 미들웨어
 export const errorMiddleware = (
   err: any,
   req: Request,
@@ -86,4 +93,28 @@ export const errorMiddleware = (
     },
     success: null,
   });
+};
+
+// 사용자 인증 미들웨어
+export const jwtAuthMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      throw new InvalidInputError(
+        "토큰이 존재하지 않습니다",
+        "입력 값: " + token
+      );
+    }
+
+    const decoded = verifyToken(token) as { id: number; studentId: number };
+    req.user = decoded;
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
