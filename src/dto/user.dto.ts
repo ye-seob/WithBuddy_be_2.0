@@ -1,7 +1,6 @@
 import { InvalidInputError } from "../util/error.js";
 
 export interface SignupDTO {
-  userId: number;
   name: string;
   studentId: number;
   email: string;
@@ -25,7 +24,6 @@ export const toSignupDTO = (body: SignupDTO): SignupDTO => {
   }
 
   return {
-    userId: body.userId,
     name: body.name,
     studentId: body.studentId,
     email: body.email,
