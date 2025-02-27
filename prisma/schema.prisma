@@ -9,12 +9,26 @@ datasource db {
 
 
 model User {
-  id         Int     @id @default(autoincrement())
-  name       String  @db.VarChar(255)
-  studentId  Int     @map("student_id")
-  email      String  @db.VarChar(255)
-  pin        String  @db.VarChar(255)
+  userId     BigInt  @id @default(autoincrement())
+  name       String  
+  pin        String  
+  studentId  BigInt  @map("student_id")
+  email      String  
+  kakaoId    String? @map("kakao_id")
+  instaId    String? @map("insta_id")
+
+  departments Department[]
 
   @@map("user")
 }
 
+model Department {
+  departmentId   BigInt  @id @default(autoincrement())
+  userId         BigInt  
+  departmentName String  @map("department_name") 
+  studentCount   Int     @map("student_count")  @default(0)
+
+  user           User    @relation(fields: [userId], references: [userId])
+
+  @@map("department")
+}
