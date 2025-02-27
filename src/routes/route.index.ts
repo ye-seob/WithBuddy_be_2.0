@@ -1,8 +1,8 @@
-import express, { Request, Response } from "express";
-import { dummyController } from "../controller/dummy.controller.js";
+import express from "express";
+import userRoute from "../routes/user.route.js";
 
 const router = express.Router();
 
-router.post("/dummy", dummyController);
+router.use("/users", userRoute);
 
 export default router;

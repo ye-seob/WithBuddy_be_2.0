@@ -9,21 +9,27 @@ datasource db {
 
 
 model User {
-  id         BigInt  @id @default(autoincrement())
-  name       String  @db.VarChar(255)
-  studentId  BigInt  @map("student_id")
-  email      String  @db.VarChar(255)
-  pin        String  @db.VarChar(255)
-  major      String  @db.VarChar(255)
+  userId     Int    @id @default(autoincrement()) @map("user_id")
+  name       String  
+  pin        String  
+  studentId  Int    @map("student_id")
+  email      String  
+  kakaoId    String? @map("kakao_id")
+  instaId    String? @map("insta_id")
+
+  departments Department[]
 
   @@map("user")
 }
 
-model PersonalMatch {
-  id        BigInt    @id @default(autoincrement())
-  seniorId  BigInt    @map("senior_id")
-  juniorId  BigInt    @map("junior_id")
-  matchedAt DateTime  @db.Date
+model Department {
+  departmentId   Int  @id @default(autoincrement()) @map("department_id")
+  
+  departmentName String  @map("department_name") 
+  studentCount   Int     @map("student_count")  @default(0)
 
-  @@map("personal_match")
+  user           User    @relation(fields: [userId], references: [userId])
+  userId         Int   @map("user_id")
+
+  @@map("department")
 }
