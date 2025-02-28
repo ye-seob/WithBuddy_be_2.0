@@ -86,4 +86,76 @@ export class MatchingService {
 
     return matching;
   }
+
+  // 그룹 매칭 생성
+  async createGroupMatching(data: any) {
+    // 유저 유효성 검사
+    const user = await this.userRepository.findUserByStudentId(data.studentId);
+
+    if (!user) {
+      throw new InvalidInputError("존재하지 않는 유저입니다", data);
+    }
+
+    // 학번의 마지막 3자리 (개인 번호)`
+    const personalNum = parseInt(data.studentId.slice(-3));
+    // 그룹 매칭 번호 계산
+    const groupNum = Math.floor((personalNum - 1) / 3) + 1;
+
+    // 기존 매칭 테이블이 존재하는지 확인
+    let matching = await this.matchingRepository.findGroupMatchingByGroupNum(
+      groupNum
+    );
+
+    // 매칭이 없으면 새로 생성
+    if (!matching) {
+      matching = await this.matchingRepository.createGroupMatching(groupNum);
+    }
+
+    // 이미 매칭에 참여하고 있는지 확인
+    const isAlreadyMatched = await this.matchingRepository.findParticipant(
+      user.userId,
+      matching.matchId
+    );
+
+    if (isAlreadyMatched) {
+      throw new AlreadyExistError("이미 개인 매칭에 참여하고 있습니다", {
+        userId: user.userId,
+      });
+    }
+
+    // 매칭 참여
+    await this.matchingRepository.createParticipant(
+      user.userId,
+      matching.matchId
+    );
+
+    return matching;
+  }
+
+  // 그룹 매칭 조회
+  async getGroupMatching(studentId: string) {
+    const user = await this.userRepository.findUserByStudentId(studentId);
+
+    if (!user) {
+      throw new InvalidInputError("존재하지 않는 유저입니다", { studentId });
+    }
+
+    // 사용자가 속한 그룹 매칭 조회
+    const matchParticipant =
+      await this.matchingRepository.findGroupMatchByUserId(user.userId);
+
+    if (!matchParticipant) {
+      throw new NotFoundError(
+        "해당 사용자는 개인 매칭에 참여하고 있지 않습니다.",
+        { userId: user.userId }
+      );
+    }
+
+    // 매칭된 유저 정보 조회
+    const matching = await this.matchingRepository.findMatchingWithParticipants(
+      matchParticipant.matchId
+    );
+
+    return matching;
+  }
 }
