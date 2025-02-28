@@ -27,7 +27,7 @@ export class UserRepository {
     return user;
   }
 
-  async findUserByStudentId(studentId: number) {
+  async findUserByStudentId(studentId: string) {
     const user = await prisma.user.findFirst({
       where: {
         studentId,
