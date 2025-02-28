@@ -7,29 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  userId     Int    @id @default(autoincrement()) @map("user_id")
-  name       String  
-  pin        String  
-  studentId  Int    @map("student_id")
-  email      String  
-  kakaoId    String? @map("kakao_id")
-  instaId    String? @map("insta_id")
+  userId    Int     @id @default(autoincrement()) @map("user_id")
+  name      String  
+  pin       String
+  studentId String  @map("student_id")
+  email     String
+  kakaoId   String? @map("kakao_id")
+  instaId   String? @map("insta_id")
 
-  departments Department[]
+  matchParticipants MatchParticipant[]
 
   @@map("user")
 }
 
-model Department {
-  departmentId   Int  @id @default(autoincrement()) @map("department_id")
-  
-  departmentName String  @map("department_name") 
-  studentCount   Int     @map("student_count")  @default(0)
+model Matching {
+  matchId     Int       @id @default(autoincrement()) @map("match_id")
+  matchType   MatchType @map("match_type")
+  personalNum Int?      @map("personal_num")
+  groupNum    Int?      @map("group_num")
 
-  user           User    @relation(fields: [userId], references: [userId])
-  userId         Int   @map("user_id")
+  matchParticipants MatchParticipant[]
 
-  @@map("department")
+  @@map("matching")
+}
+
+model MatchParticipant {
+  userId  Int   @map("user_id")
+  matchId Int   @map("match_id")
+
+  user    User      @relation(fields: [userId], references: [userId])
+  matching Matching @relation(fields: [matchId], references: [matchId])
+
+  @@id([userId, matchId]) // 복합 기본 키
+  @@map("match_participant")
+}
+
+enum MatchType {
+  INDIVIDUAL
+  GROUP
 }

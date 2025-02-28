@@ -111,7 +111,7 @@ export const jwtAuthMiddleware = (
       );
     }
 
-    const decoded = verifyToken(token) as { id: number; studentId: number };
+    const decoded = verifyToken(token) as { id: number; studentId: string };
     req.user = decoded;
     next();
   } catch (error) {

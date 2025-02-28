@@ -2,9 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { UserService } from "../service/user.service.js";
 import { StatusCodes } from "http-status-codes";
 import { toLoginDTO, toSignupDTO } from "../dto/user.dto.js";
-import { generateAccessToken } from "../util/jwt.js";
+import { generateAccessToken, generateRefreshToken } from "../util/jwt.js";
+import { MatchingService } from "../service/matching.service.js";
 
 const userService = new UserService();
+const matchingService = new MatchingService();
 
 export const signupController = async (
   req: Request,
@@ -14,7 +16,13 @@ export const signupController = async (
   try {
     const signupData = toSignupDTO(req.body);
 
+    // 회원가입 서비스 호출
     const createdUser = await userService.createUser(signupData);
+
+    // 매칭 서비스 호출
+    await matchingService.createPersonalMatching({
+      studentId: createdUser.studentId,
+    });
 
     res.status(StatusCodes.OK).success(createdUser);
   } catch (error) {
@@ -38,7 +46,7 @@ export const loginController = async (
       studentId: loginUser.studentId,
     });
 
-    const refreshToken = generateAccessToken({
+    const refreshToken = generateRefreshToken({
       id: loginUser.userId,
       studentId: loginUser.studentId,
     });
