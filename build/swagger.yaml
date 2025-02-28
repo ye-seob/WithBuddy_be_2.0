@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: WithBuddy Server API
+  version: 1.0.11
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: User
+    description: User API Tag
+
+#api paths
+paths:
+  #보안 처리
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+#보안 적용
+security:
+  - Bearer: []
