@@ -19,8 +19,12 @@ export const signupController = async (
     // 회원가입 서비스 호출
     const createdUser = await userService.createUser(signupData);
 
-    // 매칭 서비스 호출
+    // 매칭 서비스 호출 (개인 매칭)
     await matchingService.createPersonalMatching({
+      studentId: createdUser.studentId,
+    });
+    // 매칭 서비스 호출 (그룹 매칭)
+    await matchingService.createGroupMatching({
       studentId: createdUser.studentId,
     });
 

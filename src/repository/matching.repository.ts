@@ -11,6 +11,16 @@ export class MatchingRepository {
     });
   }
 
+  // 그룹 번호로 그룹 매칭 찾기
+  async findGroupMatchingByGroupNum(groupNum: number) {
+    return await prisma.matching.findFirst({
+      where: {
+        matchType: "GROUP",
+        groupNum: groupNum,
+      },
+    });
+  }
+
   // 개인 번호로 개인 매칭 생성
   async createPersonalMatching(personalNum: number) {
     return await prisma.matching.create({
@@ -18,6 +28,17 @@ export class MatchingRepository {
         matchType: "INDIVIDUAL",
         personalNum: personalNum,
         groupNum: null, // 개인 매칭이므로 groupNum은 null
+      },
+    });
+  }
+
+  // 그룹 번호로 그룹 매칭 생성
+  async createGroupMatching(groupNum: number) {
+    return await prisma.matching.create({
+      data: {
+        matchType: "GROUP",
+        personalNum: null, // 그룹 매칭이므로 personalNum은 null
+        groupNum: groupNum,
       },
     });
   }
@@ -50,6 +71,17 @@ export class MatchingRepository {
         userId: userId,
         matching: {
           matchType: "INDIVIDUAL",
+        },
+      },
+    });
+  }
+  //  userId로 그룹 매칭 찾기
+  async findGroupMatchByUserId(userId: number) {
+    return await prisma.matchParticipant.findFirst({
+      where: {
+        userId: userId,
+        matching: {
+          matchType: "GROUP",
         },
       },
     });
