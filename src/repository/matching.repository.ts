@@ -43,7 +43,7 @@ export class MatchingRepository {
       },
     });
   }
-  // 특정 사용자 ID로 개인 매칭 찾기
+  //  userId로 개인 매칭 찾기
   async findPersonalMatchByUserId(userId: number) {
     return await prisma.matchParticipant.findFirst({
       where: {
@@ -55,14 +55,16 @@ export class MatchingRepository {
     });
   }
 
-  // 특정 매칭 ID로 매칭 정보와 참가자들 정보 가져오기
+  //  매칭 ID로 매칭 정보와 참가자들 정보 가져오기
   async findMatchingWithParticipants(matchId: number) {
     return await prisma.matching.findUnique({
       where: { matchId },
       include: {
         matchParticipants: {
           include: {
-            user: true, // 참가자들의 사용자 정보도 포함
+            user: {
+              select: { userId: true, name: true },
+            },
           },
         },
       },

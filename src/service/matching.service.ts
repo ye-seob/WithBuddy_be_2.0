@@ -71,6 +71,7 @@ export class MatchingService {
     // 사용자가 속한 개인 매칭 조회
     const matchParticipant =
       await this.matchingRepository.findPersonalMatchByUserId(user.userId);
+
     if (!matchParticipant) {
       throw new NotFoundError(
         "해당 사용자는 개인 매칭에 참여하고 있지 않습니다.",
@@ -78,7 +79,7 @@ export class MatchingService {
       );
     }
 
-    // 해당 매칭에 참가한 모든 유저 정보 조회
+    // 매칭된 유저 정보 조회
     const matching = await this.matchingRepository.findMatchingWithParticipants(
       matchParticipant.matchId
     );
