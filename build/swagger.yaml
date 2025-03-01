@@ -7,9 +7,176 @@ servers:
 tags:
   - name: User
     description: User API Tag
+  - name: Matching
+    description: Matching API Tag
 
 #api paths
 paths:
+  # ======================= 유저 API ======================
+
+  # 로그인 API
+  /api/v1/users/login:
+    post:
+      tags:
+        - User
+      summary: User Login
+      description: 로그인 API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId:
+                  type: string
+                  example: "2023216049"
+                pin:
+                  type: string
+                  example: "1234"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      loginUser:
+                        type: object
+                        properties:
+                          userId:
+                            type: integer
+                            example: 2
+                          name:
+                            type: string
+                            example: "변예섭"
+                          studentId:
+                            type: string
+                            example: "2023216049"
+                          email:
+                            type: string
+                            example: "ys031027@skuniv.ac.kr"
+                          kakaoId:
+                            type: string
+                            nullable: true
+                            example: null
+                          instaId:
+                            type: string
+                            example: "ye.seob_"
+                      accessToken:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      refreshToken:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+              #실패 응답
+        "500":
+          description: Fail operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
+  /api/v1/matching/personal:
+    get:
+      tags:
+        - Matching
+      summary: Personal Matching
+      description: 개인 매칭 조회 API
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      matchId:
+                        type: integer
+                        example: 3
+                      matchType:
+                        type: string
+                        example: "INDIVIDUAL"
+                      personalNum:
+                        type: integer
+                        example: 49
+                      groupNum:
+                        type: integer
+                        nullable: true
+                        example: null
+                      matchParticipants:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            userId:
+                              type: integer
+                              example: 2
+                            matchId:
+                              type: integer
+                              example: 3
+                            user:
+                              type: object
+                              properties:
+                                userId:
+                                  type: integer
+                                  example: 2
+                                name:
+                                  type: string
+                                  example: "변예섭"
+
+              #실패 응답
+        "500":
+          description: Fail operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
+#components
+components:
+  schemas:
+    #실패 응답 Component
+    FailResponse:
+      type: object
+      properties:
+        resultType:
+          type: string
+          default: "ERROR"
+        error:
+          type: object
+          properties:
+            errorCode:
+              type: string
+            reason:
+              type: string
+            data:
+              type: string
+        success:
+          type: string
+          default: null
+
   #보안 처리
   securitySchemes:
     Bearer:

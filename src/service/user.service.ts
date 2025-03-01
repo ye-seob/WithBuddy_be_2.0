@@ -41,7 +41,8 @@ export class UserService {
       throw new NotFoundError("비밀번호가 일치하지 않습니다.", data.pin);
     }
 
-    // 후에 JWT 토큰 발급
-    return user;
+    const { pin, ...userWithoutPin } = user;
+
+    return userWithoutPin;
   }
 }
