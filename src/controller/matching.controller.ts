@@ -23,6 +23,7 @@ export const getPersonalMatchingController = async (
       );
     }
 
+    // 개인 매칭된 유저 조회
     const users = await matchingService.getPersonalMatching(studentId);
 
     res.status(StatusCodes.OK).success(users);
@@ -78,7 +79,7 @@ export const getMatchedUserDetailController = async (
 
     // 매칭이 안 됐다면 에러 발생으로 다음 코드 실행 X
 
-    // 상대방  정보 조회
+    // 상대방 정보 조회
     const userDetail = await userService.getUserDetail(targetUserId);
 
     res.status(StatusCodes.OK).success(userDetail);

@@ -20,12 +20,15 @@ app.use(express.json()); // request의 본문을 json으로 해석할 수 있도
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 
 const swaggerSpec = YAML.load(path.join("./build/swagger.yaml"));
+
+// 성공 응답 처리 미들웨어
 app.use(successMiddleware);
 
 app.use("/api/v1", mainRouter);
 
 app.use("/swagger-ui", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// 실패 응답 처리 미들웨어
 app.use(errorMiddleware);
 
 app.listen(port, () => {

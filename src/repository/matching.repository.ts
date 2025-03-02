@@ -96,7 +96,7 @@ export class MatchingRepository {
         matchParticipants: {
           include: {
             user: {
-              select: { userId: true, name: true },
+              select: { userId: true, name: true, studentId: true },
             },
           },
         },
@@ -104,6 +104,7 @@ export class MatchingRepository {
     });
   }
 
+  // 유저들이 매칭 됐는지 확인
   async isMatched(data: UserMatchingDTO) {
     const result = await prisma.$queryRaw<{ matchId: string }[]>`
   SELECT match_id 

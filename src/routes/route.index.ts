@@ -1,11 +1,13 @@
 import express from "express";
 import userRoute from "../routes/user.route.js";
 import matchingRoute from "../routes/matching.route.js";
-import { jwtAuthMiddleware } from "../util/middleware.js";
+
 const router = express.Router();
 
+// api/v1/users 경로 처리
 router.use("/users", userRoute);
 
-router.use("/matching", jwtAuthMiddleware, matchingRoute);
+// api/v1/matching 경로 처리
+router.use("/matching", matchingRoute);
 
 export default router;

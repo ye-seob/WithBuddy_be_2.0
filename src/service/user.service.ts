@@ -25,9 +25,12 @@ export class UserService {
       pin: hashedPin,
     });
 
-    return createdUser;
+    const { pin, ...userWithoutPin } = createdUser;
+
+    return userWithoutPin;
   }
 
+  // 로그인
   async login(data: loginDTO) {
     const user = await this.userRepository.findUserByStudentId(data.studentId);
 

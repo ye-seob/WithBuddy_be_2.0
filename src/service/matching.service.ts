@@ -65,6 +65,7 @@ export class MatchingService {
   // 개인 매칭 조회
   async getPersonalMatching(studentId: string) {
     const user = await this.userRepository.findUserByStudentId(studentId);
+
     if (!user) {
       throw new InvalidInputError("존재하지 않는 유저입니다", { studentId });
     }
