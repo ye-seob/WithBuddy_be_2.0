@@ -45,4 +45,16 @@ export class UserService {
 
     return userWithoutPin;
   }
+
+  async getUserDetail(userId: number) {
+    const user = await this.userRepository.findUserById(userId);
+
+    if (!user) {
+      throw new NotFoundError("사용자를 찾을 수 없습니다.", userId);
+    }
+
+    const { pin, ...userWithoutPin } = user;
+
+    return userWithoutPin;
+  }
 }
