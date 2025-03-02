@@ -1,3 +1,4 @@
+import { UserMatchingDTO } from "../dto/user.dto.js";
 import { MatchingRepository } from "../repository/matching.repository.js";
 import { UserRepository } from "../repository/user.repository.js";
 import {
@@ -157,5 +158,13 @@ export class MatchingService {
     );
 
     return matching;
+  }
+
+  async checkingMatching(data: UserMatchingDTO) {
+    const isMatched = await this.matchingRepository.isMatched(data);
+
+    if (!isMatched) {
+      throw new InvalidInputError("해당 유저와 매칭된 유저가 아닙니다", data);
+    }
   }
 }

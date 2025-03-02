@@ -52,3 +52,28 @@ export const toLoginDTO = (body: loginDTO): loginDTO => {
     pin: body.pin,
   };
 };
+export interface UserMatchingDTO {
+  loggedInUserId: number; // 현재 로그인한 유저의 ID
+  targetUserId: number; // 요청받은 상대 유저의 ID
+}
+
+export const toUserMatchingDTO = (body: UserMatchingDTO): UserMatchingDTO => {
+  if (!body.loggedInUserId) {
+    throw new InvalidInputError(
+      "현재 로그인한 user의 id값이 누락되었습니다",
+      "입력 값: 없음"
+    );
+  }
+
+  if (!body.targetUserId) {
+    throw new InvalidInputError(
+      "상대방의 userId값이 누락되었습니다",
+      "입력 값: 없음"
+    );
+  }
+
+  return {
+    loggedInUserId: body.loggedInUserId,
+    targetUserId: body.targetUserId,
+  };
+};

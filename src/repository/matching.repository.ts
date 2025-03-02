@@ -1,4 +1,5 @@
 import { prisma } from "../db.config.js";
+import { UserMatchingDTO } from "../dto/user.dto.js";
 
 export class MatchingRepository {
   // 개인 번호로 개인 매칭 찾기
@@ -101,5 +102,17 @@ export class MatchingRepository {
         },
       },
     });
+  }
+
+  async isMatched(data: UserMatchingDTO) {
+    const result = await prisma.$queryRaw<{ matchId: string }[]>`
+  SELECT match_id 
+  FROM match_participant 
+  WHERE user_id IN (${data.loggedInUserId}, ${data.targetUserId})
+  GROUP BY match_id
+  HAVING COUNT(DISTINCT user_id) = 2
+`;
+
+    return result.length > 0;
   }
 }
