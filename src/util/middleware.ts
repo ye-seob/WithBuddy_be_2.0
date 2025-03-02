@@ -102,7 +102,7 @@ export const jwtAuthMiddleware = (
   next: NextFunction
 ) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.cookies.accessToken;
 
     if (!token) {
       throw new InvalidInputError(

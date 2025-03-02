@@ -4,7 +4,6 @@ import { StatusCodes } from "http-status-codes";
 import { toLoginDTO, toSignupDTO } from "../dto/user.dto.js";
 import { generateAccessToken, generateRefreshToken } from "../util/jwt.js";
 import { MatchingService } from "../service/matching.service.js";
-
 const userService = new UserService();
 const matchingService = new MatchingService();
 
@@ -61,9 +60,18 @@ export const loginController = async (
       studentId: loginUser.studentId,
     });
 
-    res
-      .status(StatusCodes.OK)
-      .success({ loginUser, accessToken, refreshToken });
+    // 쿠키로 JWT 토큰 전달
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true, // JavaScript에서 접근할 수 없게 함
+      secure: false, // HTTPS에서만 사용
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true, // JavaScript에서 접근할 수 없게 함
+      secure: false, // HTTPS에서만 사용
+    });
+
+    res.status(StatusCodes.OK).success(loginUser);
   } catch (error) {
     console.error(error);
     next(error);

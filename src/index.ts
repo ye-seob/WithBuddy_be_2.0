@@ -5,17 +5,23 @@ import mainRouter from "./routes/route.index.js";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 const port = process.env.PORT;
 
+app.use(cookieParser());
+
+
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    credentials: true, // 세션 쿠키 전송 허용
+    origin: ["http://localhost:3000", "http://localhost:5173"],
+    credentials: true, // 쿠키 전송 허용
   })
 );
+
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 
