@@ -14,6 +14,7 @@ export const signupController = async (
   next: NextFunction
 ) => {
   try {
+    // DTO
     const signupData = toSignupDTO(req.body);
 
     // 회원가입 서비스 호출
@@ -23,6 +24,7 @@ export const signupController = async (
     await matchingService.createPersonalMatching({
       studentId: createdUser.studentId,
     });
+
     // 매칭 서비스 호출 (그룹 매칭)
     await matchingService.createGroupMatching({
       studentId: createdUser.studentId,
@@ -41,9 +43,13 @@ export const loginController = async (
   next: NextFunction
 ) => {
   try {
+    // DTP
     const loginData = toLoginDTO(req.body);
 
+    // 서비스 계층 호출
     const loginUser = await userService.login(loginData);
+
+    // jwt 생성
 
     const accessToken = generateAccessToken({
       id: loginUser.userId,
@@ -54,6 +60,7 @@ export const loginController = async (
       id: loginUser.userId,
       studentId: loginUser.studentId,
     });
+
     res
       .status(StatusCodes.OK)
       .success({ loginUser, accessToken, refreshToken });

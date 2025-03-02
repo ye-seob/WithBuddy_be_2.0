@@ -52,6 +52,7 @@ export const toLoginDTO = (body: loginDTO): loginDTO => {
     pin: body.pin,
   };
 };
+
 export interface UserMatchingDTO {
   loggedInUserId: number; // 현재 로그인한 유저의 ID
   targetUserId: number; // 요청받은 상대 유저의 ID
