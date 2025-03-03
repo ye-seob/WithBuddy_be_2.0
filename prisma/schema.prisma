@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  userId    Int     @id @default(autoincrement()) @map("user_id")
+  userId    Int   @id @default(autoincrement()) @map("user_id")
   name      String  
   pin       String
   studentId String  @map("student_id")
@@ -17,6 +17,8 @@ model User {
   instaId   String? @map("insta_id")
 
   matchParticipants MatchParticipant[]
+   posts    Post[]
+  comments Comment[]
 
   @@map("user")
 }
@@ -33,7 +35,7 @@ model Matching {
 }
 
 model MatchParticipant {
-  userId  Int   @map("user_id")
+  userId  Int  @map("user_id")
   matchId Int   @map("match_id")
 
   user    User      @relation(fields: [userId], references: [userId])
@@ -46,4 +48,49 @@ model MatchParticipant {
 enum MatchType {
   INDIVIDUAL
   GROUP
+}
+
+
+model Post {
+  postId       Int   @id @default(autoincrement())
+  userId       Int
+  title        String   @db.VarChar(255)
+  content      String   @db.Text
+  likeCount    Int      @default(0) @map("like_count")
+  dislikeCount Int      @default(0) @map("dislike_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime? @map("updated_at")
+
+  user      User      @relation(fields: [userId], references: [userId])
+  comments  Comment[]
+  postTags  PostTag[]
+}
+
+model Comment {
+  commentId  Int   @id @default(autoincrement())
+  userId     Int
+  postId     Int
+  content    String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime? @map("updated_at")
+
+  user  User @relation(fields: [userId], references: [userId])
+  post  Post @relation(fields: [postId], references: [postId])
+}
+
+model PostTag {
+  postId Int
+  tagId  Int @map("tag_id")
+
+  post Post @relation(fields: [postId], references: [postId])
+  tag  Tag  @relation(fields: [tagId], references: [tagId])
+
+  @@id([postId, tagId])
+}
+
+model Tag {
+  tagId Int @id @default(autoincrement()) @map("tag_id")
+  name  String @db.VarChar(255)
+
+  postTags PostTag[]
 }
