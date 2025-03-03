@@ -40,4 +40,25 @@ export class PostService {
 
     return posts;
   }
+
+  // 글 상세 조회
+  async getPostDetail(data: any) {
+    // 유효성 검사
+    const user = await this.userRepository.findUserById(data.userId);
+
+    if (!user) {
+      throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
+    }
+
+    // 유효성 검사
+    const postDetail = await this.postRepository.findPostDetailById(
+      data.postId
+    );
+
+    if (!postDetail) {
+      throw new InvalidInputError("존재하지 않는 글입니다", data.postId);
+    }
+
+    return postDetail;
+  }
 }

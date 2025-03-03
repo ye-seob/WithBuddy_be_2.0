@@ -52,10 +52,32 @@ export const getPostListController = async (
     const getPostListData = toGetPostListDTO({ userId, ...req.query });
 
     const posts = await postService.getPostList(getPostListData);
-    res.status(StatusCodes.OK).json({
-      success: true,
-      posts,
-    });
+    res.status(StatusCodes.OK).success(posts);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const getPostDeatailController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user?.id;
+  const postId = parseInt(req.params.postId);
+
+  try {
+    if (!userId) {
+      throw new InvalidInputError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+
+    const postDetail = await postService.getPostDetail({ userId, postId });
+
+    res.status(StatusCodes.OK).success(postDetail);
   } catch (error) {
     console.error(error);
     next(error);

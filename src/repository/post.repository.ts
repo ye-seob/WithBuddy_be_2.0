@@ -47,4 +47,45 @@ export class PostRepository {
 
     return posts;
   }
+
+  async findPostDetailById(postId: number) {
+    const post = await prisma.post.findFirst({
+      where: {
+        postId: postId,
+      },
+      include: {
+        user: {
+          // 작성자 정보
+          select: {
+            userId: true,
+            studentId: true,
+          },
+        },
+        comments: {
+          // 댓글
+          include: {
+            user: {
+              // 댓글 작성자 정보
+              select: {
+                userId: true,
+                studentId: true,
+              },
+            },
+          },
+        },
+        postTags: {
+          // 글에 달린 태그
+          include: {
+            tag: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return post;
+  }
 }
