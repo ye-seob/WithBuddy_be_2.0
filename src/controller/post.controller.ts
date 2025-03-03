@@ -75,6 +75,7 @@ export const getPostDeatailController = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("씨이발");
   const userId = req.user?.id;
   const postId = parseInt(req.params.postId);
 
@@ -146,6 +147,31 @@ export const deletePostController = async (
     const deletedPost = await postService.deletePost(deletePostData);
 
     res.status(StatusCodes.OK).success(deletedPost);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const getMyPostsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user?.id;
+
+  try {
+    if (!userId) {
+      throw new InvalidInputError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+
+    // 서비스 계층 호출
+    const myPosts = await postService.getMyPosts(userId);
+
+    res.status(StatusCodes.OK).success(myPosts);
   } catch (error) {
     console.error(error);
     next(error);

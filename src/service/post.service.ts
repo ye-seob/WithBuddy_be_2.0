@@ -126,4 +126,16 @@ export class PostService {
 
     return await this.postRepository.deletePost(data.postId);
   }
+
+  // 글 삭제
+  async getMyPosts(userId: number) {
+    // 유효성 검사
+    const user = await this.userRepository.findUserById(userId);
+
+    if (!user) {
+      throw new InvalidInputError("존재하지 않는 유저입니다", userId);
+    }
+
+    return await this.postRepository.findPostByUserId(userId);
+  }
 }

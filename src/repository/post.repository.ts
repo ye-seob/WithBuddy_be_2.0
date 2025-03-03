@@ -28,6 +28,15 @@ export class PostRepository {
 
     return post;
   }
+  async findPostByUserId(userId: number) {
+    const posts = await prisma.post.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    return posts;
+  }
 
   async findPostList(data: GetPostListDTO) {
     const posts = await prisma.post.findMany({
