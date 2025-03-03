@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  userId    BigInt     @id @default(autoincrement()) @map("user_id")
+  userId    Int   @id @default(autoincrement()) @map("user_id")
   name      String  
   pin       String
   studentId String  @map("student_id")
@@ -24,7 +24,7 @@ model User {
 }
 
 model Matching {
-  matchId     BigInt       @id @default(autoincrement()) @map("match_id")
+  matchId     Int       @id @default(autoincrement()) @map("match_id")
   matchType   MatchType @map("match_type")
   personalNum Int?      @map("personal_num")
   groupNum    Int?      @map("group_num")
@@ -35,8 +35,8 @@ model Matching {
 }
 
 model MatchParticipant {
-  userId  BigInt  @map("user_id")
-  matchId BigInt   @map("match_id")
+  userId  Int  @map("user_id")
+  matchId Int   @map("match_id")
 
   user    User      @relation(fields: [userId], references: [userId])
   matching Matching @relation(fields: [matchId], references: [matchId])
@@ -52,8 +52,8 @@ enum MatchType {
 
 
 model Post {
-  postId       BigInt   @id @default(autoincrement())
-  userId       BigInt
+  postId       Int   @id @default(autoincrement())
+  userId       Int
   title        String   @db.VarChar(255)
   content      String   @db.Text
   likeCount    Int      @default(0) @map("like_count")
@@ -67,9 +67,9 @@ model Post {
 }
 
 model Comment {
-  commentId  BigInt   @id @default(autoincrement())
-  userId     BigInt
-  postId     BigInt
+  commentId  Int   @id @default(autoincrement())
+  userId     Int
+  postId     Int
   content    String   @db.Text
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime? @map("updated_at")
@@ -79,8 +79,8 @@ model Comment {
 }
 
 model PostTag {
-  postId BigInt
-  tagId  BigInt @map("tag_id")
+  postId Int
+  tagId  Int @map("tag_id")
 
   post Post @relation(fields: [postId], references: [postId])
   tag  Tag  @relation(fields: [tagId], references: [tagId])
@@ -89,7 +89,7 @@ model PostTag {
 }
 
 model Tag {
-  tagId BigInt @id @default(autoincrement()) @map("tag_id")
+  tagId Int @id @default(autoincrement()) @map("tag_id")
   name  String @db.VarChar(255)
 
   postTags PostTag[]
