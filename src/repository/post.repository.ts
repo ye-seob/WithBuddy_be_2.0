@@ -3,6 +3,7 @@ import {
   CreatePostDTO,
   GetPostListDTO,
   UpdatePostDTO,
+  UserPostDTO,
 } from "../dto/post.dto.js";
 
 export class PostRepository {
@@ -103,7 +104,7 @@ export class PostRepository {
     return post;
   }
 
-  async isPostOwner(data: any) {
+  async isPostOwner(data: UserPostDTO) {
     const post = await prisma.post.findUnique({
       where: { postId: data.postId },
       select: { userId: true },
@@ -125,5 +126,21 @@ export class PostRepository {
     });
 
     return updatedPost;
+  }
+
+  async deletePost(postId: number) {
+    const deletedPost = await prisma.post.delete({
+      where: { postId: postId },
+    });
+
+    return deletedPost;
+  }
+
+  async deletePostTag(postId: number) {
+    const deletedPost = await prisma.postTag.deleteMany({
+      where: { postId: postId },
+    });
+
+    return deletedPost;
   }
 }
