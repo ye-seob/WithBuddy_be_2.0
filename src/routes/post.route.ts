@@ -5,6 +5,7 @@ import {
   createPostController,
   getPostDeatailController,
   getPostListController,
+  updatePostController,
 } from "../controller/post.controller.js";
 
 const router = express.Router();
@@ -14,10 +15,13 @@ const router = express.Router();
 // 글 생성
 router.post("/", jwtAuthMiddleware, createPostController);
 
-// 게시글 목록 조회 (무한스크롤, 태그 필터링)
+// 글 목록 조회 (무한스크롤, 태그 필터링)
 router.get("/list", jwtAuthMiddleware, getPostListController);
 
-// 게시글 상세 조회
+// 특정 글 상세 조회
 router.get("/:postId", jwtAuthMiddleware, getPostDeatailController);
+
+// 글 수정
+router.put("/update/:postId", jwtAuthMiddleware, updatePostController);
 
 export default router;

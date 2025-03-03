@@ -1,5 +1,9 @@
 import { prisma } from "../db.config.js";
-import { CreatePostDTO, GetPostListDTO } from "../dto/post.dto.js";
+import {
+  CreatePostDTO,
+  GetPostListDTO,
+  UpdatePostDTO,
+} from "../dto/post.dto.js";
 
 export class PostRepository {
   async createPost(data: CreatePostDTO) {
@@ -8,6 +12,16 @@ export class PostRepository {
         userId: data.userId,
         title: data.title,
         content: data.content,
+      },
+    });
+
+    return post;
+  }
+
+  async findPostById(postId: number) {
+    const post = await prisma.post.findFirst({
+      where: {
+        postId,
       },
     });
 
@@ -87,5 +101,29 @@ export class PostRepository {
     });
 
     return post;
+  }
+
+  async isPostOwner(data: any) {
+    const post = await prisma.post.findUnique({
+      where: { postId: data.postId },
+      select: { userId: true },
+    });
+
+    return post?.userId === data.userId;
+  }
+
+  async updatePost(data: UpdatePostDTO) {
+    const updatedPost = await prisma.post.update({
+      where: {
+        postId: data.postId,
+      },
+      data: {
+        title: data.title,
+        content: data.content,
+        updatedAt: new Date(),
+      },
+    });
+
+    return updatedPost;
   }
 }
