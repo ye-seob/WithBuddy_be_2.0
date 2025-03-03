@@ -50,7 +50,7 @@ export const refreshAccessToken = async (
         secure: false, // HTTPS에서만 사용
       });
 
-      res.status(StatusCodes.OK).success({ accessToken: newAccessToken });
+      res.status(StatusCodes.OK).success({});
     });
   } catch (error) {
     next(error);

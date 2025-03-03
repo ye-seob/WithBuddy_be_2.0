@@ -26,6 +26,7 @@ export const createPostController = async (
     // DTO
     const createPostData = toCreatePostDTO({ userId, ...req.body });
 
+    // 서비스 계층 호출
     const post = await postService.createPost(createPostData);
 
     res.status(StatusCodes.OK).success(post);

@@ -12,8 +12,9 @@ export class PostService {
     this.userRepository = new UserRepository();
   }
 
-  //  rmf 생성
+  //  글 생성
   async createPost(data: CreatePostDTO) {
+    // 유효성 검사
     const user = await this.userRepository.findUserById(data.userId);
 
     if (!user) {
