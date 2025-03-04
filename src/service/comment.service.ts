@@ -1,10 +1,4 @@
-import { CreateCommentDTO } from "../dto/comment.dto.js";
-import {
-  CreatePostDTO,
-  GetPostListDTO,
-  UpdatePostDTO,
-  UserPostDTO,
-} from "../dto/post.dto.js";
+import { CreateCommentDTO, UserCommentDTO } from "../dto/comment.dto.js";
 import { CommentRepository } from "../repository/comment.repository.js";
 import { PostRepository } from "../repository/post.repository.js";
 import { UserRepository } from "../repository/user.repository.js";
@@ -39,5 +33,36 @@ export class CommentService {
     const newComment = await this.commentRepository.createComment(data);
 
     return newComment;
+  }
+
+  // 글 삭제
+  async deleteComment(data: UserCommentDTO) {
+    // 유효성 검사
+    const user = await this.userRepository.findUserById(data.userId);
+
+    if (!user) {
+      throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
+    }
+
+    // 유효성 검사
+    const comment = await this.commentRepository.findCommentById(
+      data.commentId
+    );
+
+    if (!comment) {
+      throw new InvalidInputError("존재하지 않는 댓글입니다", data.commentId);
+    }
+
+    const isOwner = await this.commentRepository.isCommentOwner(data);
+
+    if (!isOwner) {
+      throw new InvalidInputError("해당 유저가 쓴 댓글이 아닙니다", data);
+    }
+
+    await this.commentRepository.deleteRepliesByCommentId(data.commentId);
+
+    return await this.commentRepository.deleteCommentByCommentId(
+      data.commentId
+    );
   }
 }
