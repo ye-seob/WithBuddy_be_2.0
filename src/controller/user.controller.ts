@@ -20,14 +20,10 @@ export const signupController = async (
     const createdUser = await userService.createUser(signupData);
 
     // 매칭 서비스 호출 (개인 매칭)
-    await matchingService.createPersonalMatching({
-      studentId: createdUser.studentId,
-    });
+    await matchingService.createPersonalMatching(createdUser.studentId);
 
     // 매칭 서비스 호출 (그룹 매칭)
-    await matchingService.createGroupMatching({
-      studentId: createdUser.studentId,
-    });
+    await matchingService.createGroupMatching(createdUser.studentId);
 
     res.status(StatusCodes.OK).success(createdUser);
   } catch (error) {

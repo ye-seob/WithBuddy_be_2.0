@@ -11,6 +11,10 @@ tags:
     description: Auth API Tag
   - name: Matching
     description: Matching API Tag
+  - name: Post
+    description: Post API Tag
+  - name: Comment
+    description: Comment API Tag
 
 #api paths
 paths:
@@ -158,6 +162,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FailResponse"
+
+  # ======================= 토큰 API ======================
 
   # 엑세스 토큰 재발급 api
   /api/v1/auth/refresh:
@@ -387,6 +393,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FailResponse"
+
+  # =========== 글  api ============
 #components
 components:
   schemas:
