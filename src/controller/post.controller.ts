@@ -75,7 +75,6 @@ export const getPostDeatailController = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("씨이발");
   const userId = req.user?.id;
   const postId = parseInt(req.params.postId);
 
