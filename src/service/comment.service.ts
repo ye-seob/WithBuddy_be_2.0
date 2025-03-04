@@ -29,7 +29,17 @@ export class CommentService {
     if (!post) {
       throw new InvalidInputError("존재하지 않는 글입니다", data.postId);
     }
-
+    if (data.parentCommentId) {
+      const parentComment = await this.commentRepository.findCommentById(
+        data.parentCommentId
+      );
+      if (!parentComment) {
+        throw new InvalidInputError(
+          "존재하지 않는 부모 댓글입니다",
+          data.parentCommentId
+        );
+      }
+    }
     const newComment = await this.commentRepository.createComment(data);
 
     return newComment;
