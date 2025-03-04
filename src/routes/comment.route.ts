@@ -19,6 +19,6 @@ router.post("/", jwtAuthMiddleware, createCommentController);
 router.get("/my", jwtAuthMiddleware, getMyCommentsController);
 
 // 댓글 삭제
-router.delete("/delete/:postId", jwtAuthMiddleware, deleteCommentController);
+router.delete("/delete/:commentId", jwtAuthMiddleware, deleteCommentController);
 
 export default router;

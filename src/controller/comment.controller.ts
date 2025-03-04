@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { InvalidInputError } from "../util/error.js";
 import { PostService } from "../service/post.service.js";
 import { toCreatePostDTO, toUserPostDTO } from "../dto/post.dto.js";
-import { toCreateCommentDTO } from "../dto/comment.dto.js";
+import { toCreateCommentDTO, toUserCommentDTO } from "../dto/comment.dto.js";
 import { CommentService } from "../service/comment.service.js";
 
 const postService = new PostService();
@@ -43,7 +43,7 @@ export const deleteCommentController = async (
   next: NextFunction
 ) => {
   const userId = req.user?.id;
-  const postId = parseInt(req.params.postId);
+  const commentId = parseInt(req.params.commentId);
 
   try {
     if (!userId) {
@@ -52,14 +52,16 @@ export const deleteCommentController = async (
         "입력 값: " + req.headers.authorization
       );
     }
+
     // DTO 변환
-    const deletePostData = toUserPostDTO({ userId, postId });
+    const deleteCommentData = toUserCommentDTO({ userId, commentId });
 
-    console.log("controller : ", deletePostData);
     // 서비스 계층 호출
-    const deletedPost = await postService.deletePost(deletePostData);
+    const deletedComment = await commentService.deleteComment(
+      deleteCommentData
+    );
 
-    res.status(StatusCodes.OK).success(deletedPost);
+    res.status(StatusCodes.OK).success(deletedComment);
   } catch (error) {
     console.error(error);
     next(error);
