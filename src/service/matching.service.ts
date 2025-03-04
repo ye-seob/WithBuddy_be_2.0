@@ -17,18 +17,20 @@ export class MatchingService {
   }
 
   // 개인 매칭 생성
-  async createPersonalMatching(data: any) {
-    // 유저 유효성 검사
-    const user = await this.userRepository.findUserByStudentId(data.studentId);
+  async createPersonalMatching(studentId: string) {
+    // 유효성 검사
+    const user = await this.userRepository.findUserByStudentId(studentId);
 
     if (!user) {
-      throw new InvalidInputError("존재하지 않는 유저입니다", data);
+      throw new InvalidInputError("존재하지 않는 유저입니다", studentId);
     }
 
     // 학번의 마지막 3자리 (개인 번호)
-    const personalNum = parseInt(data.studentId.slice(-3));
+    const personalNum = parseInt(studentId.slice(-3));
 
     // 기존 매칭 테이블이 존재하는지 확인
+    // 유저가 049번이면 INDIVIDUAL 이면서 personalNum이 49d인 테이블을 조회
+
     let matching =
       await this.matchingRepository.findPersonalMatchingByPersonalId(
         personalNum
@@ -64,6 +66,7 @@ export class MatchingService {
 
   // 개인 매칭 조회
   async getPersonalMatching(studentId: string) {
+    // 유효성 검사
     const user = await this.userRepository.findUserByStudentId(studentId);
 
     if (!user) {
@@ -74,6 +77,7 @@ export class MatchingService {
     const matchParticipant =
       await this.matchingRepository.findPersonalMatchByUserId(user.userId);
 
+    // 유저가 속한 개인 매칭이 없다면
     if (!matchParticipant) {
       throw new NotFoundError(
         "해당 사용자는 개인 매칭에 참여하고 있지 않습니다.",
@@ -90,16 +94,17 @@ export class MatchingService {
   }
 
   // 그룹 매칭 생성
-  async createGroupMatching(data: any) {
+  async createGroupMatching(studentId: string) {
     // 유저 유효성 검사
-    const user = await this.userRepository.findUserByStudentId(data.studentId);
+    const user = await this.userRepository.findUserByStudentId(studentId);
 
     if (!user) {
-      throw new InvalidInputError("존재하지 않는 유저입니다", data);
+      throw new InvalidInputError("존재하지 않는 유저입니다", studentId);
     }
 
     // 학번의 마지막 3자리 (개인 번호)`
-    const personalNum = parseInt(data.studentId.slice(-3));
+    const personalNum = parseInt(studentId.slice(-3));
+
     // 그룹 매칭 번호 계산
     const groupNum = Math.floor((personalNum - 1) / 3) + 1;
 
@@ -120,7 +125,7 @@ export class MatchingService {
     );
 
     if (isAlreadyMatched) {
-      throw new AlreadyExistError("이미 개인 매칭에 참여하고 있습니다", {
+      throw new AlreadyExistError("이미 그룹 매칭에 참여하고 있습니다", {
         userId: user.userId,
       });
     }
@@ -136,6 +141,7 @@ export class MatchingService {
 
   // 그룹 매칭 조회
   async getGroupMatching(studentId: string) {
+    // 유효성 검사
     const user = await this.userRepository.findUserByStudentId(studentId);
 
     if (!user) {
@@ -148,7 +154,7 @@ export class MatchingService {
 
     if (!matchParticipant) {
       throw new NotFoundError(
-        "해당 사용자는 개인 매칭에 참여하고 있지 않습니다.",
+        "해당 사용자는 그룹 매칭에 참여하고 있지 않습니다.",
         { userId: user.userId }
       );
     }
@@ -161,6 +167,7 @@ export class MatchingService {
     return matching;
   }
 
+  // 로그인한 유저와 상대방이 매칭 됐는지 확인
   async checkingMatching(data: UserMatchingDTO) {
     const isMatched = await this.matchingRepository.isMatched(data);
 

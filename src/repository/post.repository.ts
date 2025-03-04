@@ -7,6 +7,7 @@ import {
 } from "../dto/post.dto.js";
 
 export class PostRepository {
+  // 글 생성
   async createPost(data: CreatePostDTO) {
     const post = await prisma.post.create({
       data: {
@@ -19,6 +20,7 @@ export class PostRepository {
     return post;
   }
 
+  // postId로 글 조회
   async findPostById(postId: number) {
     const post = await prisma.post.findFirst({
       where: {
@@ -28,6 +30,8 @@ export class PostRepository {
 
     return post;
   }
+
+  // userId로 글 조회
   async findPostByUserId(userId: number) {
     const posts = await prisma.post.findMany({
       where: {
@@ -38,6 +42,7 @@ export class PostRepository {
     return posts;
   }
 
+  // 글 목록 조회
   async findPostList(data: GetPostListDTO) {
     const posts = await prisma.post.findMany({
       where: {
@@ -63,7 +68,7 @@ export class PostRepository {
       include: {
         postTags: {
           include: {
-            tag: true, // 태그 정보도 함께 포함
+            tag: true, // 태그 정보도  포함
           },
         },
       },
@@ -72,6 +77,7 @@ export class PostRepository {
     return posts;
   }
 
+  // 글 상세 조회
   async findPostDetailById(postId: number) {
     const post = await prisma.post.findFirst({
       where: {
@@ -113,6 +119,7 @@ export class PostRepository {
     return post;
   }
 
+  // 글쓴이가 맞는지 확인
   async isPostOwner(data: UserPostDTO) {
     const post = await prisma.post.findUnique({
       where: { postId: data.postId },
@@ -122,6 +129,7 @@ export class PostRepository {
     return post?.userId === data.userId;
   }
 
+  // 글 업데이트
   async updatePost(data: UpdatePostDTO) {
     const updatedPost = await prisma.post.update({
       where: {
@@ -137,6 +145,7 @@ export class PostRepository {
     return updatedPost;
   }
 
+  // 글 삭제
   async deletePost(postId: number) {
     const deletedPost = await prisma.post.delete({
       where: { postId: postId },
@@ -145,6 +154,7 @@ export class PostRepository {
     return deletedPost;
   }
 
+  // 글 태그 삭제
   async deletePostTag(postId: number) {
     const deletedPost = await prisma.postTag.deleteMany({
       where: { postId: postId },

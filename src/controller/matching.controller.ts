@@ -8,6 +8,7 @@ import { toUserMatchingDTO } from "../dto/user.dto.js";
 const matchingService = new MatchingService();
 const userService = new UserService();
 
+// 개인 매칭 조회
 export const getPersonalMatchingController = async (
   req: Request,
   res: Response,
@@ -23,7 +24,7 @@ export const getPersonalMatchingController = async (
       );
     }
 
-    // 개인 매칭된 유저 조회
+    // 서비스 계층 호출
     const users = await matchingService.getPersonalMatching(studentId);
 
     res.status(StatusCodes.OK).success(users);

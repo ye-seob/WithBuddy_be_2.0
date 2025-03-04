@@ -34,7 +34,7 @@ export class PostService {
     return newPost;
   }
 
-  // 글 목록 조회 (무한스크롤 및 태그 필터링)
+  // 글 목록 조회
   async getPostList(data: GetPostListDTO) {
     // 유효성 검사
     const user = await this.userRepository.findUserById(data.userId);
@@ -58,7 +58,6 @@ export class PostService {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
 
-    // 유효성 검사
     const postDetail = await this.postRepository.findPostDetailById(
       data.postId
     );
@@ -78,7 +77,6 @@ export class PostService {
     if (!user) {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
-
     // 유효성 검사
     const post = await this.postRepository.findPostById(data.postId);
 
@@ -86,6 +84,7 @@ export class PostService {
       throw new InvalidInputError("존재하지 않는 글입니다", data.postId);
     }
 
+    // 본인이 쓴 글이 맞는지 확인
     const isOwner = await this.postRepository.isPostOwner({
       userId: data.userId,
       postId: data.postId,
@@ -107,7 +106,6 @@ export class PostService {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
 
-    // 유효성 검사
     const post = await this.postRepository.findPostById(data.postId);
 
     if (!post) {
@@ -120,14 +118,16 @@ export class PostService {
       throw new InvalidInputError("해당 유저가 쓴 글이 아닙니다", data);
     }
 
+    // 먼저 댓글을 지움
     await this.commentRepository.deleteCommentByPostId(data.postId);
 
+    // 태그도 지움
     await this.postRepository.deletePostTag(data.postId);
 
+    // 글 삭제
     return await this.postRepository.deletePost(data.postId);
   }
 
-  // 글 삭제
   async getMyPosts(userId: number) {
     // 유효성 검사
     const user = await this.userRepository.findUserById(userId);
