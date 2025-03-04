@@ -67,15 +67,19 @@ model Post {
 }
 
 model Comment {
-  commentId  Int   @id @default(autoincrement())
-  userId     Int
-  postId     Int
-  content    String   @db.Text
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime? @map("updated_at")
+  commentId      Int       @id @default(autoincrement())
+  userId         Int
+  postId         Int
+  content        String    @db.Text
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime? @map("updated_at")
+  parentCommentId Int?    
 
-  user  User @relation(fields: [userId], references: [userId])
-  post  Post @relation(fields: [postId], references: [postId])
+  user           User      @relation(fields: [userId], references: [userId])
+  post           Post      @relation(fields: [postId], references: [postId])
+  parentComment  Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [commentId])
+  replies        Comment[] @relation("CommentReplies")
+
 }
 
 model PostTag {
