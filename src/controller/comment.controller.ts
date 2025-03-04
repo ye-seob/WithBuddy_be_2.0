@@ -1,12 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { InvalidInputError } from "../util/error.js";
-import { PostService } from "../service/post.service.js";
-import { toCreatePostDTO, toUserPostDTO } from "../dto/post.dto.js";
 import { toCreateCommentDTO, toUserCommentDTO } from "../dto/comment.dto.js";
 import { CommentService } from "../service/comment.service.js";
 
-const postService = new PostService();
 const commentService = new CommentService();
 
 export const createCommentController = async (
