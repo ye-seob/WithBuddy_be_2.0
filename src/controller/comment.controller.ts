@@ -84,9 +84,9 @@ export const getMyCommentsController = async (
     }
 
     // 서비스 계층 호출
-    const myPosts = await postService.getMyPosts(userId);
+    const myComments = await commentService.getMyComments(userId);
 
-    res.status(StatusCodes.OK).success(myPosts);
+    res.status(StatusCodes.OK).success(myComments);
   } catch (error) {
     console.error(error);
     next(error);

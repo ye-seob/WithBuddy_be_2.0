@@ -53,4 +53,12 @@ export class CommentRepository {
 
     return comment?.userId === data.userId;
   }
+
+  async findCommentsByUserId(userId: number) {
+    const comments = await prisma.comment.findMany({
+      where: { userId: userId },
+    });
+
+    return comments;
+  }
 }
