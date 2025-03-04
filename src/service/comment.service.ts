@@ -65,4 +65,15 @@ export class CommentService {
       data.commentId
     );
   }
+
+  async getMyComments(userId: number) {
+    // 유효성 검사
+    const user = await this.userRepository.findUserById(userId);
+
+    if (!user) {
+      throw new InvalidInputError("존재하지 않는 유저입니다", userId);
+    }
+
+    return await this.commentRepository.findCommentsByUserId(userId);
+  }
 }
