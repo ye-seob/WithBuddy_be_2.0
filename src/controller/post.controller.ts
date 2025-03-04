@@ -141,7 +141,6 @@ export const deletePostController = async (
     // DTO 변환
     const deletePostData = toUserPostDTO({ userId, postId });
 
-    console.log("controller : ", deletePostData);
     // 서비스 계층 호출
     const deletedPost = await postService.deletePost(deletePostData);
 
