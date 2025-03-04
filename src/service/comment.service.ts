@@ -29,6 +29,8 @@ export class CommentService {
     if (!post) {
       throw new InvalidInputError("존재하지 않는 글입니다", data.postId);
     }
+
+    // 부모 댓글 Id 존재 확인
     if (data.parentCommentId) {
       const parentComment = await this.commentRepository.findCommentById(
         data.parentCommentId
@@ -40,6 +42,7 @@ export class CommentService {
         );
       }
     }
+
     const newComment = await this.commentRepository.createComment(data);
 
     return newComment;
@@ -69,6 +72,7 @@ export class CommentService {
       throw new InvalidInputError("해당 유저가 쓴 댓글이 아닙니다", data);
     }
 
+    // 대댓글 먼저 삭제
     await this.commentRepository.deleteRepliesByCommentId(data.commentId);
 
     return await this.commentRepository.deleteCommentByCommentId(

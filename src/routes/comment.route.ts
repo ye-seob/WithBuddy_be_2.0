@@ -12,7 +12,7 @@ const router = express.Router();
 
 // api/v1/comments 경로
 
-// 글 생성
+// 댓글 생성
 router.post("/", jwtAuthMiddleware, createCommentController);
 
 // 나의 댓글 조회
