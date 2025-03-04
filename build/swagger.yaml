@@ -7,15 +7,15 @@ servers:
 tags:
   - name: User
     description: User API Tag
-  - name: Auth
-    description: Auth API Tag
+
   - name: Matching
     description: Matching API Tag
   - name: Post
     description: Post API Tag
   - name: Comment
     description: Comment API Tag
-
+  - name: Auth
+    description: Auth API Tag
 #api paths
 paths:
   # ======================= 유저 API ======================
