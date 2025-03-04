@@ -49,13 +49,16 @@ export class UserService {
     return userWithoutPin;
   }
 
+  // 유저 정보 상세 조회
   async getUserDetail(userId: number) {
+    // 유효성 검사
     const user = await this.userRepository.findUserById(userId);
 
     if (!user) {
       throw new NotFoundError("사용자를 찾을 수 없습니다.", userId);
     }
 
+    // pin 제외 user 리턴
     const { pin, ...userWithoutPin } = user;
 
     return userWithoutPin;

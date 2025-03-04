@@ -49,7 +49,6 @@ export const loginController = async (
     const loginUser = await userService.login(loginData);
 
     // jwt 생성
-
     const accessToken = generateAccessToken({
       id: loginUser.userId,
       studentId: loginUser.studentId,
