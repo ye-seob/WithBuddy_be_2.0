@@ -1,0 +1,68 @@
+name: deploy-main
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$VM_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          cat >>~/.ssh/config <<END
+          Host with-buddy
+            HostName $VM_HOST
+            User $VM_USER
+            IdentityFile ~/.ssh/id_rsa
+            StrictHostKeyChecking no
+          END
+        env:
+          VM_USER: ubuntu # 원하는 사용자로 변경
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+
+      - name: Copy Workspace
+        run: |
+          ssh with-buddy 'sudo mkdir -p /opt/app'
+          ssh with-buddy 'sudo chown ubuntu:ubuntu /opt/app'
+          scp -r ./[!.]* with-buddy:/opt/app
+
+      - name: Install dependencies
+        run: |
+          ssh with-buddy 'npm install --prefix /opt/app/'
+
+      - name: Copy systemd service file
+        run: |
+          ssh with-buddy '
+            echo "[Unit]
+            Description=WithBuddy Project
+            After=network.target
+
+            [Service]
+            User=${USER}
+            ExecStart=/usr/bin/npm run dev --prefix /opt/app/
+            Restart=always
+
+            [Install]
+            WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service
+          '
+
+      - name: Enable systemd service
+        run: |
+          ssh with-buddy 'sudo systemctl daemon-reload'
+          ssh with-buddy 'sudo systemctl enable app'
+
+      - name: Restart systemd service
+        run: |
+          ssh with-buddy 'sudo systemctl restart app'
