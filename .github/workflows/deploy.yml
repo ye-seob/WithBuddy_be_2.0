@@ -35,10 +35,15 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            script: |
             cd /home/ubuntu/WithBuddy_be_2.0
+            echo "Starting git pull"
             git pull origin main
+            echo "npm install"
             npm i --force
+            echo "Running prisma generate"
             npx prisma generate
+            echo "Running prisma migrate deploy"
             npx prisma migrate deploy
 
       - name: excuting code
