@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: "18"
 
-      - name: install code and install dependencies
+      - name: Install code and dependencies
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -41,16 +41,14 @@ jobs:
           port: 22
           script: |
             cd /home/ubuntu/WithBuddy_be_2.0
-            echo "Starting git pull"
-            git pull origin main
-            echo "npm install"
-            npm i --force
-            echo "Running prisma generate"
+            git fetch origin
+            git reset --hard origin/main  
+            npm audit fix
+            npm install --force
             npx prisma generate
-            echo "Running prisma migrate deploy"
             npx prisma migrate deploy
 
-      - name: excuting code
+      - name: Execute code
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
