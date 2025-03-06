@@ -90,6 +90,8 @@ model PostTag {
   tag  Tag  @relation(fields: [tagId], references: [tagId])
 
   @@id([postId, tagId])
+
+  @@map("post_tag")
 }
 
 model Tag {
@@ -97,4 +99,14 @@ model Tag {
   name  String @db.VarChar(255)
 
   postTags PostTag[]
+}
+
+model VerificationCode {
+  id          Int    @id @default(autoincrement())
+  email       String    @unique
+  code        String    @db.VarChar(6) 
+  expiresAt   DateTime  @map("expires_at") // 만료 시간
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+   @@map("verification_code")
 }
