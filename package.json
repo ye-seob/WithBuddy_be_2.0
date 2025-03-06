@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon -e js,json,prisma,ts --exec \"prisma generate && tsx src/index.ts\"",
-    "build": "tsc",
+    "build": "tsx scripts/build.ts",
+    "start": "tsx src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
