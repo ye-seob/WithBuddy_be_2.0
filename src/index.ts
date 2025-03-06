@@ -15,7 +15,11 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://152.67.220.123:3000",
+    ],
     credentials: true, // 쿠키 전송 허용
   })
 );
