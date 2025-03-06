@@ -1,68 +1,42 @@
-name: deploy-main
+name: Oracle Cloud Integration
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-20.04
+  setup-oci:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Configure SSH
+      - name: Set up OCI CLI
         run: |
-          mkdir -p ~/.ssh
-          echo "$VM_SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install oci-cli
 
-          cat >>~/.ssh/config <<END
-          Host with-buddy
-            HostName $VM_HOST
-            User $VM_USER
-            IdentityFile ~/.ssh/id_rsa
-            StrictHostKeyChecking no
-          END
-        env:
-          VM_USER: ubuntu # 원하는 사용자로 변경
-          VM_HOST: ${{ secrets.VM_HOST }}
-          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
-
-      - name: Copy Workspace
+      - name: Configure OCI CLI
         run: |
-          ssh with-buddy 'sudo mkdir -p /opt/app'
-          ssh with-buddy 'sudo chown ubuntu:ubuntu /opt/app'
-          scp -r ./[!.]* with-buddy:/opt/app
+          mkdir -p ~/.oci
+          echo "[DEFAULT]" > ~/.oci/config
+          echo "user=${{ secrets.OCI_USER }}" >> ~/.oci/config
+          echo "fingerprint=${{ secrets.OCI_FINGERPRINT }}" >> ~/.oci/config
+          echo "key_file=${{ secrets.OCI_KEY }}" >> ~/.oci/config
+          echo "tenancy=${{ secrets.OCI_TENANCY }}" >> ~/.oci/config
+          echo "region=${{ secrets.OCI_REGION }}" >> ~/.oci/config
 
-      - name: Install dependencies
+      - name: Test OCI CLI connectivity
         run: |
-          ssh with-buddy 'npm install --prefix /opt/app/'
+          oci compute instance list --compartment-id ${OCI_TENANCY}
 
-      - name: Copy systemd service file
+      - name: Run custom OCI operations
         run: |
-          ssh with-buddy '
-            echo "[Unit]
-            Description=WithBuddy Project
-            After=network.target
-
-            [Service]
-            User=${USER}
-            ExecStart=/usr/bin/npm run dev --prefix /opt/app/
-            Restart=always
-
-            [Install]
-            WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service
-          '
-
-      - name: Enable systemd service
-        run: |
-          ssh with-buddy 'sudo systemctl daemon-reload'
-          ssh with-buddy 'sudo systemctl enable app'
-
-      - name: Restart systemd service
-        run: |
-          ssh with-buddy 'sudo systemctl restart app'
+          echo "OCI 작업 실행"
+          # 여기서 오라클 클라우드 리소스를 관리하는 커스텀 명령어를 실행하세요
