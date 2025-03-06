@@ -1,4 +1,4 @@
-name: deploy1
+name: deploy
 
 on:
   push:
@@ -14,12 +14,12 @@ jobs:
     steps:
       - name: Create .env file
         run: |
-          sudo echo "PORT=${{ secrets.PORT }}" >> .env
-          sudo echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          sudo echo "JWT_SECRET_ACCESS_KEY=${{ secrets.JWT_SECRET_ACCESS_KEY }}" >> .env
-          sudo echo "JWT_SECRET_REFRESH_KEY=${{ secrets.JWT_SECRET_REFRESH_KEY }}" >> .env
-          sudo echo "EMAIL=${{ secrets.EMAIL }}" >> .env
-          sudo echo "SMTPPASSWORD=${{ secrets.SMTPPASSWORD }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "JWT_SECRET_ACCESS_KEY=${{ secrets.JWT_SECRET_ACCESS_KEY }}" >> .env
+          echo "JWT_SECRET_REFRESH_KEY=${{ secrets.JWT_SECRET_REFRESH_KEY }}" >> .env
+          echo "EMAIL=${{ secrets.EMAIL }}" >> .env
+          echo "SMTPPASSWORD=${{ secrets.SMTPPASSWORD }}" >> .env
 
       - name: Copy .env file to
         uses: appleboy/scp-action@master
