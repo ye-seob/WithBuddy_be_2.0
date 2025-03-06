@@ -64,6 +64,8 @@ model Post {
   user      User      @relation(fields: [userId], references: [userId])
   comments  Comment[]
   postTags  PostTag[]
+
+   @@map("post")
 }
 
 model Comment {
@@ -80,6 +82,7 @@ model Comment {
   parentComment  Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [commentId])
   replies        Comment[] @relation("CommentReplies")
 
+  @@map("comment")
 }
 
 model PostTag {
