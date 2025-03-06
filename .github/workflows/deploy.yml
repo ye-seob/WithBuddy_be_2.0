@@ -21,7 +21,7 @@ jobs:
 
           cat >>~/.ssh/config <<END
           Host withbuddy
-            HostName $EC2_HOST
+            HostName $SSH_HOST
             User $USER
             IdentityFile ~/.ssh/id_rsa
             StrictHostKeyChecking no
