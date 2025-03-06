@@ -1,4 +1,4 @@
-name: deploy
+name: deploy-main
 
 on:
   push:
@@ -8,36 +8,61 @@ on:
 
 jobs:
   deploy:
-    name: deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install code and install dependencies
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: |
-            cd /home/ubuntu/WithBuddy_be_2.0
-            git pull origin main
-            sudo npm install -g npm  # 최신 npm 버전으로 업데이트
-            npm install
-            npm install openapi-types@^7  # openapi-types 설치
-            npm audit fix  # 취약점 자동 수정
-            npx prisma generate
-            npx prisma migrate deploy
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Execute code and restart app
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: |
-            cd /home/ubuntu/WithBuddy_be_2.0
-            pm2 kill || true  # pm2 프로세스가 없을 경우 에러 무시
-            npm run build
-            pm2 start ecosystem.config.json
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa 
+          chmod 600 ~/.ssh/id_rsa  
+
+          cat >>~/.ssh/config <<END  
+          Host WithBuddy_be_2.0 
+            HostName $SSH_HOST 
+            User $USER  
+            IdentityFile ~/.ssh/id_rsa 
+            StrictHostKeyChecking no 
+          END
+        env:
+          USER: ubuntu
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          PORT: ${{ secrets.PORT }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET_ACCESS_KEY: ${{ secrets.JWT_SECRET_ACCESS_KEY }}
+          JWT_SECRET_REFRESH_KEY: ${{ secrets.JWT_SECRET_REFRESH_KEY }}
+          EMAIL: ${{ secrets.EMAIL }}
+          SMTPPASSWORD: ${{ secrets.SMTPPASSWORD }}
+
+      - name: Install dependencies
+        run: |
+          ssh WithBuddy_be_2.0 'npm install --prefix /home/ubuntu/WithBuddy_be_2.0'
+
+      - name: Copy systemd service file
+        run: |
+          ssh WithBuddy_be_2.0 '
+            echo "[Unit]
+            Description=WithBuddy_be_2
+            After=network.target
+
+            [Service]
+            User=${USER}
+            ExecStart=/usr/bin/npm run dev --prefix /home/ubuntu/WithBuddy_be_2.0 
+            Restart=always
+
+            [Install]
+            WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service 
+          '
+
+      - name: Enable systemd service
+        run: |
+          ssh WithBuddy_be_2.0 'sudo systemctl daemon-reload'
+          ssh WithBuddy_be_2.0 'sudo systemctl enable app'
+
+      - name: Restart systemd service
+        run: |
+          ssh WithBuddy_be_2.0 'sudo systemctl restart app'
