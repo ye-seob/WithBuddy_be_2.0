@@ -40,6 +40,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            node -v
             cd /home/ubuntu/WithBuddy_be_2.0
             git fetch origin
             git reset --hard origin/main  
