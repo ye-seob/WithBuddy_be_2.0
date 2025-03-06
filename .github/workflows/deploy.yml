@@ -1,37 +1,59 @@
-name: Oracle Cloud Integration
+name: deploy
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  setup-oci:
+  deploy:
+    name: deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up OCI CLI
+      - name: Create .env file
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install oci-cli
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "JWT_SECRET_ACCESS_KEY=${{ secrets.JWT_SECRET_ACCESS_KEY }}" >> .env
+          echo "JWT_SECRET_REFRESH_KEY=${{ secrets.JWT_SECRET_REFRESH_KEY }}" >> .env
+          echo "EMAIL=${{ secrets.EMAIL }}" >> .env
+          echo "SMTPPASSWORD=${{ secrets.SMTPPASSWORD }}" >> .env
 
-      - name: Configure OCI CLI using oci configure
-        run: |
-          echo -e "${{ secrets.OCI_USER }}\n${{ secrets.OCI_FINGERPRINT }}\n${{ secrets.OCI_KEY }}\n${{ secrets.OCI_TENANCY }}\n${{ secrets.OCI_REGION }}" | oci setup config
+      - name: Copy .env file to
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: ".env"
+          target: "/home/ubuntu/WithBuddy_be_2.0"
 
-      - name: Check OCI config file
-        run: |
-          cat ~/.oci/config
+      - name: install code and install dependencies
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/ubuntu/WithBuddy_be_2.0
+            git pull origin main
+            npm i --force
+            npm exec prisma generate
+            npm exec prisma migrate deploy
 
-      - name: Test OCI CLI connectivity
-        run: |
-          oci compute instance list --compartment-id ${OCI_TENANCY}
-
-      - name: Run custom OCI operations
-        run: |
-          echo "OCI 작업 실행"
-          # 여기서 오라클 클라우드 리소스를 관리하는 커스텀 명령어를 실행하세요
+      - name: excuting code
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/ubuntu/WithBuddy_be_2.0
+            pm2 kill
+            npm run build
+            pm2 start ecosystem.config.json
