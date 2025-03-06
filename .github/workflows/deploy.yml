@@ -30,6 +30,7 @@ jobs:
           port: 22
           source: ".env"
           target: "/home/ubuntu/WithBuddy_be_2.0"
+          overwrite: true
 
       - name: install code and install dependencies
         uses: appleboy/ssh-action@v1.2.0
