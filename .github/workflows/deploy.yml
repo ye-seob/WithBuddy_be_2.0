@@ -27,6 +27,11 @@ jobs:
           target: "/home/ubuntu/WithBuddy_be_2.0"
           overwrite: true
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
       - name: install code and install dependencies
         uses: appleboy/ssh-action@v1.2.0
         with:
