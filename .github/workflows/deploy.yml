@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # .env 파일 생성
       - name: Create .env file
         run: |
           echo "PORT=${{ secrets.PORT }}" >> .env
@@ -21,7 +22,8 @@ jobs:
           echo "EMAIL=${{ secrets.EMAIL }}" >> .env
           echo "SMTPPASSWORD=${{ secrets.SMTPPASSWORD }}" >> .env
 
-      - name: Copy .env file to
+      # .env 파일을 서버로 복사
+      - name: Copy .env file to server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -31,7 +33,8 @@ jobs:
           source: ".env"
           target: "/home/ubuntu/WithBuddy_be_2.0"
 
-      - name: install code and install dependencies
+      # .env 파일 권한 설정
+      - name: Set .env file permissions
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -39,21 +42,4 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            cd /home/ubuntu/WithBuddy_be_2.0
-            git pull origin main
-            npm i --force
-            npm exec prisma generate
-            npm exec prisma migrate deploy
-
-      - name: excuting code
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: |
-            cd /home/ubuntu/WithBuddy_be_2.0
-            pm2 kill
-            npm run build
-            pm2 start ecosystem.config.json
+            chmod 644 /home/ubuntu/WithBuddy_be_2.0/.env
