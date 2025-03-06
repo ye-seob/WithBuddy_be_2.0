@@ -1,7 +1,7 @@
 import { UserRepository } from "../repository/user.repository.js";
 import { AlreadyExistError, NotFoundError } from "../util/error.js";
 import { loginDTO, SignupDTO } from "../dto/user.dto.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export class UserService {
   private userRepository: UserRepository;
