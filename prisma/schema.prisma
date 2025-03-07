@@ -102,6 +102,8 @@ model Tag {
   name  String @db.VarChar(255)
 
   postTags PostTag[]
+
+  @@map("tag")
 }
 
 model VerificationCode {
