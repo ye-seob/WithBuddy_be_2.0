@@ -16,11 +16,19 @@ jobs:
           echo "PORT=${{ secrets.PORT }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
 
-      - name: Copy .env file to EC2 with Debug
-        run: |
-          scp -v -i ${{ secrets.SSH_KEY }} -P 22 .env ${{ secrets.USER }}@${{ secrets.SSH_HOST }}:/home/ubuntu/WithBuddy_be_2.0
+      - name: Copy .env file to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: ".env"
+          target: "/home/ubuntu/WithBuddy_be_2.0"
+          debug: true
+          overwrite: true
 
-      - name: Install code and dependencies with Debug
+      - name: Install code and dependencies
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -30,11 +38,11 @@ jobs:
           script: |
             cd /home/ubuntu/WithBuddy_be_2.0
             git pull origin main
-            npm install --force --verbose
-            npx prisma generate --verbose
-            npx prisma migrate deploy --verbose
+            npm install --force
+            npx prisma generate
+            npx prisma migrate deploy
 
-      - name: Execute code with Debug
+      - name: Execute code
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -44,5 +52,5 @@ jobs:
           script: |
             cd /home/ubuntu/WithBuddy_be_2.0
             pm2 kill
-            npm run build --verbose
-            pm2 start ecosystem.config.cjs --no-daemon
+            npm run build
+            pm2 start ecosystem.config.cjs
