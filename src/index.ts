@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-const port = process.env.PORT;
+const PORT = parseInt(process.env.PORT || "3000", 10);
 
 app.use(cookieParser());
 
@@ -39,6 +39,7 @@ app.use("/swagger-ui", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // 실패 응답 처리 미들웨어
 app.use(errorMiddleware);
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+// Use
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Server running on all interfaces, port 3000");
 });
