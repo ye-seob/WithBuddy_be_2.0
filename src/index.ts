@@ -8,6 +8,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import ChatController from "./controller/chat.controller.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -21,13 +22,7 @@ const io = new Server(httpServer, {
   },
 });
 
-io.on("connection", (socket) => {
-  console.log("사용자가 연결됨:", socket.id);
-
-  socket.on("disconnect", () => {
-    console.log("사용자가 연결 해제됨:", socket.id);
-  });
-});
+new ChatController(io);
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 
