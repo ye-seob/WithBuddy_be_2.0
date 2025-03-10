@@ -8,7 +8,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import ChatController from "./controller/chat.controller.js";
+import { ChatController } from "./controller/chat.controller.js";
 
 const app = express();
 const httpServer = createServer(app);
