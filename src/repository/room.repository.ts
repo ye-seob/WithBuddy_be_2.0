@@ -39,4 +39,21 @@ export class RoomRepository {
       where: { roomName: groupNum, RoomType: "GROUP" },
     });
   }
+
+  async findRoomsByUserId(userId: number) {
+    return prisma.chatParticipant.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        room: {
+          select: {
+            roomName: true,
+            RoomType: true,
+            roomId: true,
+          },
+        },
+      },
+    });
+  }
 }

@@ -51,4 +51,8 @@ export class RoomService {
       });
     }
   };
+  async getUserRooms(userId: number) {
+    const rooms = await this.roomRepository.findRoomsByUserId(userId);
+    return rooms;
+  }
 }

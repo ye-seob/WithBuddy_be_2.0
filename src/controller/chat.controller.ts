@@ -11,12 +11,13 @@ class ChatController {
 
   private setupSocket(io: Server) {
     io.on("connection", (socket: Socket) => {
-      console.log("연결되었습니다 ", socket.id);
+      socket.on("getUserRooms", async (userId: number) => {
+        const rooms = await this.roomService.getUserRooms(userId);
 
-      // 소켓 연결 종료
-      socket.on("disconnect", () => {
-        console.log("User disconnected: ", socket.id);
+        socket.emit("userRooms", rooms);
       });
+      // 소켓 연결 종료
+      socket.on("disconnect", () => {});
     });
   }
 }
