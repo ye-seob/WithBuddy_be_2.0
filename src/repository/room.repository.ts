@@ -1,4 +1,5 @@
 import { prisma } from "../db.config.js";
+import { UserRoomDTO } from "../dto/chat.dto.js";
 
 export class RoomRepository {
   async createGroupRoom(roomName: string) {
@@ -34,9 +35,9 @@ export class RoomRepository {
     });
   }
 
-  async findGroupRoomByGroupNum(groupNum: string) {
+  async findGroupRoomByName(roomName: string) {
     return prisma.room.findFirst({
-      where: { roomName: groupNum, RoomType: "GROUP" },
+      where: { roomName },
     });
   }
 
@@ -55,5 +56,15 @@ export class RoomRepository {
         },
       },
     });
+  }
+  async isUserInRoom(data: UserRoomDTO) {
+    const participant = await prisma.chatParticipant.findFirst({
+      where: {
+        userId: data.userId,
+        roomId: data.roomId,
+      },
+    });
+
+    return participant !== null;
   }
 }

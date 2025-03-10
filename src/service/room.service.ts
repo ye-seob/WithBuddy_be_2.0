@@ -1,3 +1,4 @@
+import { UserRoomDTO } from "../dto/chat.dto.js";
 import { RoomRepository } from "../repository/room.repository.js";
 
 export class RoomService {
@@ -8,10 +9,9 @@ export class RoomService {
   }
 
   createGroupRoom = async (data: any) => {
-    // 그룹 채팅방이 있는지 검사
-    let room = await this.roomRepository.findGroupRoomByGroupNum(data.groupNum);
-
     const roomName = "group" + data.groupNum;
+    // 그룹 채팅방이 있는지 검사
+    let room = await this.roomRepository.findGroupRoomByName(roomName);
 
     // 없다면 그룹 채팅방 생성
     if (!room) {
@@ -47,12 +47,16 @@ export class RoomService {
       // 방 만들걸로 유저와 방 연결
       this.roomRepository.createChatParticipant({
         roomId: room.roomId,
-        otherUserId,
+        userId: otherUserId,
       });
     }
   };
   async getUserRooms(userId: number) {
     const rooms = await this.roomRepository.findRoomsByUserId(userId);
+
     return rooms;
+  }
+  async isUserInRoom(data: UserRoomDTO) {
+    return await this.roomRepository.isUserInRoom(data);
   }
 }
