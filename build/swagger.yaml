@@ -8,6 +8,8 @@ servers:
 tags:
   - name: User
     description: User API Tag
+  - name: Mail
+    description: Mail API Tag
 
   - name: Matching
     description: Matching API Tag
@@ -157,6 +159,101 @@ paths:
                             example: "ye.seob_"
 
               #실패 응답
+        "500":
+          description: Fail operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
+
+  # ======================== 메일 API ========================
+
+  # 이메일 전송 API
+  /api/v1/mails/send:
+    post:
+      tags:
+        - Mail
+      summary: Send Email
+      description: 이메일 전송 API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "ys031027@skuniv.ac.kr"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: array
+                    items:
+                      type: string
+                      example: "ys031027@skuniv.ac.kr"
+
+        "500":
+          description: Fail operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
+
+  # 이메일 인증 API
+  /api/v1/mails/verify:
+    post:
+      tags:
+        - Mail
+      summary: Verify Email
+      description: 이메일 인증 API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "ys031027@skuniv.ac.kr"
+                code:
+                  type: string
+                  example: "306020"
+
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: string
+                    example: "성공"
+
         "500":
           description: Fail operation
           content:
