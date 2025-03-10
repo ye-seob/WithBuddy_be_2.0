@@ -60,5 +60,3 @@ jobs:
             # 서비스 재시작 (서비스가 실행되지 않으면 시작)
             pm2 status withbuddy_be_2 || pm2 start withbuddy_be_2
             pm2 restart withbuddy_be_2
-            # 로그 확인
-            pm2 logs withbuddy_be_2
