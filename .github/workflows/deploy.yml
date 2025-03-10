@@ -57,6 +57,11 @@ jobs:
             cd /home/ubuntu/WithBuddy_be_2.0
             # 빌드
             npm run build || exit 1
-            # 서비스 재시작 (서비스가 실행되지 않으면 시작)
-            pm2 status withbuddy_be_2 || pm2 start withbuddy_be_2
-            pm2 restart withbuddy_be_2
+            # 서비스 상태 확인 후 시작 또는 재시작
+            if pm2 status withbuddy_be_2 | grep -q "online"; then
+              echo "Service is already running, restarting..."
+              pm2 restart withbuddy_be_2
+            else
+              echo "Service is not running, starting..."
+              pm2 start ecosystem.config.cjs
+            fi
