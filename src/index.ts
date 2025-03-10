@@ -6,8 +6,23 @@ import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import path from "path";
 import cookieParser from "cookie-parser";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import ChatController from "./controller/chat.controller.js";
 
 const app = express();
+const httpServer = createServer(app);
+
+// socket.io 설정
+const io = new Server(httpServer, {
+  cors: {
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+new ChatController(io);
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 
@@ -39,7 +54,6 @@ app.use("/swagger-ui", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // 실패 응답 처리 미들웨어
 app.use(errorMiddleware);
 
-// Use
-app.listen(PORT, "0.0.0.0", () => {
+httpServer.listen(PORT, "0.0.0.0", () => {
   console.log("Server running on all interfaces, port 3000");
 });

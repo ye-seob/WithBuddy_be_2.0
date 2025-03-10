@@ -4,8 +4,11 @@ import { StatusCodes } from "http-status-codes";
 import { toLoginDTO, toSignupDTO } from "../dto/user.dto.js";
 import { generateAccessToken, generateRefreshToken } from "../util/jwt.js";
 import { MatchingService } from "../service/matching.service.js";
+import { RoomService } from "../service/room.service.js";
+
 const userService = new UserService();
 const matchingService = new MatchingService();
+const roomService = new RoomService();
 
 export const signupController = async (
   req: Request,
@@ -22,8 +25,30 @@ export const signupController = async (
     // 매칭 서비스 호출 (개인 매칭)
     await matchingService.createPersonalMatching(createdUser.studentId);
 
-    // 매칭 서비스 호출 (그룹 매칭)
-    await matchingService.createGroupMatching(createdUser.studentId);
+    // 매칭 서비스 호출 (그룹 매칭 생성)
+    const groupInfo = await matchingService.createGroupMatching(
+      createdUser.studentId
+    );
+
+    // 그룹 매칭 유저들의 정보를 얻어오기
+    const matchParticipants = await matchingService.getGroupMatching(
+      createdUser.studentId
+    );
+
+    // 없다면 채팅방 만들 필요 X
+    if (matchParticipants) {
+      // 개인 채팅방 생성
+      await roomService.createIndividualRooms(
+        createdUser.userId,
+        matchParticipants.matchParticipants
+      );
+    }
+
+    // 그룹 채팅방 생성
+    await roomService.createGroupRoom({
+      userId: createdUser.userId,
+      groupNum: groupInfo.groupNum,
+    });
 
     res.status(StatusCodes.OK).success(createdUser);
   } catch (error) {

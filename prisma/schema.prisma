@@ -17,8 +17,10 @@ model User {
   instaId   String? @map("insta_id")
 
   matchParticipants MatchParticipant[]
-   posts    Post[]
+  posts    Post[]
   comments Comment[]
+  chatParticipants ChatParticipant[]
+  messages Message[]
 
   @@map("user")
 }
@@ -49,6 +51,11 @@ enum MatchType {
   INDIVIDUAL
   GROUP
 }
+enum RoomType {
+  INDIVIDUAL
+  GROUP
+}
+
 
 
 model Post {
@@ -114,4 +121,39 @@ model VerificationCode {
   createdAt   DateTime  @default(now()) @map("created_at")
 
    @@map("verification_code")
+}
+
+model Room {
+  roomId    Int              @id @default(autoincrement()) @map("room_id")
+  roomName  String           @db.VarChar(255) @map("room_name")
+  RoomType   RoomType @map("room_type")
+  createdAt DateTime         @default(now()) @map("created_at")
+  participants ChatParticipant[]
+  messages    Message[] 
+
+  @@map("room")
+}
+
+model Message {
+  messageId  Int      @id @default(autoincrement()) @map("message_id")
+  roomId     Int      @map("room_id")
+  senderId   Int      @map("sender_id")
+  content    String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  room       Room     @relation(fields: [roomId], references: [roomId])
+  sender     User     @relation(fields: [senderId], references: [userId])
+
+  @@map("message")
+}
+
+model ChatParticipant {
+  userId  Int    @map("user_id")
+  roomId  Int    @map("room_id")
+
+  user    User   @relation(fields: [userId], references: [userId])
+  room    Room   @relation(fields: [roomId], references: [roomId])
+
+  @@id([userId, roomId])  // 복합 기본 키
+  @@map("chat_participant")
 }
