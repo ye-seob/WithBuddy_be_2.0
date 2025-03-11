@@ -145,3 +145,25 @@ export const updateUserInfoController = async (
     next(error);
   }
 };
+
+export const updatePinController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const email = req.body.email;
+  const pin = req.body.pin;
+
+  try {
+    if (!email || !pin) {
+      throw new InvalidInputError("입력값이 충분하지 않습니다", "");
+    }
+
+    const updatedUser = await userService.updatePin(email, pin);
+
+    res.status(StatusCodes.OK).success(updatedUser);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};

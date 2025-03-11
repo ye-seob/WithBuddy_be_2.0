@@ -57,4 +57,10 @@ export class UserRepository {
       data: data,
     });
   }
+  async updatePin(data: any) {
+    return await prisma.user.update({
+      where: { userId: data.userId },
+      data: data,
+    });
+  }
 }
