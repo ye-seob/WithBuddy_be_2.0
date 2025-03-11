@@ -50,6 +50,13 @@ paths:
                 instaId:
                   type: string
                   example: "ye.seob_"
+                mbti:
+                  type: string
+                  example: "ISTP"
+                bio:
+                  type: string
+                  example: "안녕하세요"
+
       responses:
         "200":
           description: Successful operation
@@ -86,7 +93,16 @@ paths:
                         example: null
                       instaId:
                         type: string
+                        nullable: true
                         example: "ye.seob_"
+                      mbti:
+                        type: string
+                        example: "ISTP"
+                      bio:
+                        type: string
+                        nullable: true
+                        example: "안녕하세요"
+
         "500":
           description: Fail operation
           content:
@@ -154,7 +170,15 @@ paths:
                             example: null
                           instaId:
                             type: string
+                            nullable: true
                             example: "ye.seob_"
+                          mbti:
+                            type: string
+                            example: "ISTP"
+                          bio:
+                            type: string
+                            nullable: true
+                            example: "안녕하세요"
 
               #실패 응답
         "500":
