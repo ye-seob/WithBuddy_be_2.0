@@ -3,6 +3,7 @@ import {
   getUserInfoController,
   loginController,
   signupController,
+  updatePinController,
   updateUserInfoController,
 } from "../controller/user.controller.js";
 import { jwtAuthMiddleware } from "../util/middleware.js";
@@ -22,5 +23,8 @@ router.get("/my", jwtAuthMiddleware, getUserInfoController);
 
 // 정보 수정
 router.patch("/update", jwtAuthMiddleware, updateUserInfoController);
+
+// pin 재설정
+router.patch("/update/pin", jwtAuthMiddleware, updatePinController);
 
 export default router;
