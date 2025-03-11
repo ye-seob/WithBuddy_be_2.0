@@ -86,16 +86,16 @@ export const loginController = async (
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: isProduction, // 프로덕션 환경에서는 HTTPS에서만 쿠키를 설정
-      sameSite: isProduction ? "none" : "lax", // 프로덕션에서는 "none", 로컬에서는 "lax"
+      secure: false, // 프로덕션 환경에서는 HTTPS에서만 쿠키를 설정,https 설정  후 isProduction로 변경해야함"
+      sameSite: "lax", // 프로덕션에서는 "none", 로컬에서는 "lax" 후에  isProduction ? "none" : "lax"로 변경
       domain, // 환경에 맞는 도메인 설정
       path: "/",
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: isProduction, // 프로덕션 환경에서는 HTTPS에서만 쿠키를 설정
-      sameSite: isProduction ? "none" : "lax", // 프로덕션에서는 "none", 로컬에서는 "lax"
+      secure: false, // 프로덕션 환경에서는 HTTPS에서만 쿠키를 설정,https 설정  후 isProduction로 변경해야함
+      sameSite: "lax", // 프로덕션에서는 "none", 로컬에서는 "lax" 후에  isProduction ? "none" : "lax"로 변경
       domain, // 환경에 맞는 도메인 설정
       path: "/",
     });
