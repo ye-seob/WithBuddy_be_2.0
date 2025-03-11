@@ -25,6 +25,6 @@ router.get("/my", jwtAuthMiddleware, getUserInfoController);
 router.patch("/update", jwtAuthMiddleware, updateUserInfoController);
 
 // pin 재설정
-router.patch("/update/pin", jwtAuthMiddleware, updatePinController);
+router.patch("/update/pin", updatePinController);
 
 export default router;

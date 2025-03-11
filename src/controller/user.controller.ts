@@ -64,13 +64,16 @@ export const loginController = async (
   next: NextFunction
 ) => {
   try {
-    // DTO
+    const isProduction = process.env.NODE_ENV === "production";
+    const domain = process.env.COOKIE_DOMAIN || "localhost";
+
+    // DTO 변환
     const loginData = toLoginDTO(req.body);
 
     // 서비스 계층 호출
     const loginUser = await userService.login(loginData);
 
-    // jwt 생성
+    // JWT 생성
     const accessToken = generateAccessToken({
       id: loginUser.userId,
       studentId: loginUser.studentId,
@@ -81,15 +84,20 @@ export const loginController = async (
       studentId: loginUser.studentId,
     });
 
-    // 쿠키로 JWT 토큰 전달
     res.cookie("accessToken", accessToken, {
-      httpOnly: true, // JavaScript에서 접근할 수 없게 함
-      secure: false, // HTTPS에서만 사용
+      httpOnly: true,
+      secure: isProduction, // 프로덕션 환경에서는 HTTPS에서만 쿠키를 설정
+      sameSite: isProduction ? "none" : "lax", // 프로덕션에서는 "none", 로컬에서는 "lax"
+      domain, // 환경에 맞는 도메인 설정
+      path: "/",
     });
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, // JavaScript에서 접근할 수 없게 함
-      secure: false, // HTTPS에서만 사용
+      httpOnly: true,
+      secure: isProduction, // 프로덕션 환경에서는 HTTPS에서만 쿠키를 설정
+      sameSite: isProduction ? "none" : "lax", // 프로덕션에서는 "none", 로컬에서는 "lax"
+      domain, // 환경에 맞는 도메인 설정
+      path: "/",
     });
 
     res.status(StatusCodes.OK).success(loginUser);
@@ -98,6 +106,7 @@ export const loginController = async (
     next(error);
   }
 };
+
 export const getUserInfoController = async (
   req: Request,
   res: Response,
