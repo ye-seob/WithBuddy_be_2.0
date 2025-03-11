@@ -1,6 +1,10 @@
 import { UserRepository } from "../repository/user.repository.js";
-import { AlreadyExistError, NotFoundError } from "../util/error.js";
-import { loginDTO, SignupDTO } from "../dto/user.dto.js";
+import {
+  AlreadyExistError,
+  InvalidInputError,
+  NotFoundError,
+} from "../util/error.js";
+import { loginDTO, SignupDTO, UpdateUserDTO } from "../dto/user.dto.js";
 import bcrypt from "bcryptjs";
 
 export class UserService {
@@ -15,7 +19,13 @@ export class UserService {
     const user = await this.userRepository.findUserByStudentId(data.studentId);
 
     if (user) {
-      throw new AlreadyExistError("이미 존재하는 유저입니다", data);
+      throw new AlreadyExistError("이미 존재하는 유저입니다", data.studentId);
+    }
+
+    const emailUser = await this.userRepository.findUserByEmail(data.email);
+
+    if (emailUser) {
+      throw new AlreadyExistError("이미 존재하는 유저입니다", data.email);
     }
 
     const hashedPin = await bcrypt.hash(data.pin, 10);
@@ -60,6 +70,42 @@ export class UserService {
 
     // pin 제외 user 리턴
     const { pin, ...userWithoutPin } = user;
+
+    return userWithoutPin;
+  }
+  async updateUserInfo(data: UpdateUserDTO) {
+    if (data.pin) {
+      const hashedPin = await bcrypt.hash(data.pin, 3);
+      data.pin = hashedPin;
+    }
+
+    const updateUser = await this.userRepository.updateUser(data);
+
+    // pin 제외 user 리턴
+    const { pin, ...userWithoutPin } = updateUser;
+
+    return userWithoutPin;
+  }
+
+  async updatePin(email: string, newPin: string) {
+    const user = await this.userRepository.findUserByEmail(email);
+
+    if (!user) {
+      throw new InvalidInputError("존재하지 않은 회원입니다", email);
+    }
+
+    if (newPin) {
+      const hashedPin = await bcrypt.hash(newPin, 3);
+      newPin = hashedPin;
+    }
+
+    const updateUser = await this.userRepository.updatePin({
+      userId: user.userId,
+      pin: newPin,
+    });
+
+    // pin 제외 user 리턴
+    const { pin, ...userWithoutPin } = updateUser;
 
     return userWithoutPin;
   }

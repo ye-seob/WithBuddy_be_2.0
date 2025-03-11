@@ -1,5 +1,4 @@
 import { InvalidInputError } from "../util/error.js";
-
 export interface SignupDTO {
   name: string;
   studentId: string;
@@ -7,9 +6,11 @@ export interface SignupDTO {
   pin: string;
   instaId?: string;
   kakaoId?: string;
+  mbti: string;
+  bio?: string;
 }
 
-export const toSignupDTO = (body: SignupDTO): SignupDTO => {
+export const toSignupDTO = (body: any): SignupDTO => {
   if (!body.name) {
     throw new InvalidInputError("이름이 누락되었습니다.", "입력 값: 없음");
   }
@@ -22,6 +23,9 @@ export const toSignupDTO = (body: SignupDTO): SignupDTO => {
   if (!body.pin) {
     throw new InvalidInputError("PIN 코드가 누락되었습니다.", "입력 값: 없음");
   }
+  if (!body.mbti) {
+    throw new InvalidInputError("mbti가 누락되었습니다.", "입력 값: 없음");
+  }
 
   return {
     name: body.name,
@@ -30,6 +34,8 @@ export const toSignupDTO = (body: SignupDTO): SignupDTO => {
     pin: body.pin,
     instaId: body.instaId,
     kakaoId: body.kakaoId,
+    mbti: body.mbti,
+    bio: body.bio,
   };
 };
 
@@ -76,5 +82,33 @@ export const toUserMatchingDTO = (body: UserMatchingDTO): UserMatchingDTO => {
   return {
     loggedInUserId: body.loggedInUserId,
     targetUserId: body.targetUserId,
+  };
+};
+
+export interface UpdateUserDTO {
+  userId: number;
+  name?: string;
+  pin?: string;
+  instaId?: string;
+  kakaoId?: string;
+  mbti?: string;
+  bio?: string;
+}
+
+export const toUpdateUserDTO = (body: any): UpdateUserDTO => {
+  if (body.pin && body.pin.length < 4) {
+    throw new InvalidInputError(
+      "PIN 코드는 최소 4자리여야 합니다.",
+      `입력 값: ${body.pin}`
+    );
+  }
+  return {
+    userId: body.userId,
+    name: body.name,
+    pin: body.pin,
+    instaId: body.instaId,
+    kakaoId: body.kakaoId,
+    mbti: body.mbti,
+    bio: body.bio,
   };
 };

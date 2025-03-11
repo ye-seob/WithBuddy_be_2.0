@@ -52,6 +52,13 @@ paths:
                 instaId:
                   type: string
                   example: "ye.seob_"
+                mbti:
+                  type: string
+                  example: "ISTP"
+                bio:
+                  type: string
+                  example: "안녕하세요"
+
       responses:
         "200":
           description: Successful operation
@@ -88,7 +95,16 @@ paths:
                         example: null
                       instaId:
                         type: string
+                        nullable: true
                         example: "ye.seob_"
+                      mbti:
+                        type: string
+                        example: "ISTP"
+                      bio:
+                        type: string
+                        nullable: true
+                        example: "안녕하세요"
+
         "500":
           description: Fail operation
           content:
@@ -156,7 +172,15 @@ paths:
                             example: null
                           instaId:
                             type: string
+                            nullable: true
                             example: "ye.seob_"
+                          mbti:
+                            type: string
+                            example: "ISTP"
+                          bio:
+                            type: string
+                            nullable: true
+                            example: "안녕하세요"
 
               #실패 응답
         "500":
@@ -166,6 +190,299 @@ paths:
               schema:
                 $ref: "#/components/schemas/FailResponse"
 
+  # 내 정보 조회 API
+  /api/v1/users/my:
+    get:
+      tags:
+        - User
+      summary: Get My User Info
+      description: 로그인된 사용자의 정보를 가져오는 API
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "테스트"
+                      studentId:
+                        type: string
+                        example: "2023216049"
+                      email:
+                        type: string
+                        example: "ys031027@skuniv.ac.kr"
+                      kakaoId:
+                        type: string
+                        nullable: true
+                        example: null
+                      instaId:
+                        type: string
+                        nullable: true
+                        example: "ye.seob_"
+                      mbti:
+                        type: string
+                        example: "ISTP"
+                      bio:
+                        type: string
+                        nullable: true
+                        example: null
+        "500":
+          description: Fail operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
+
+  # 내 정보 수정 API
+  /api/v1/users/update:
+    patch:
+      tags:
+        - User
+      summary: Update User Info
+      description: 사용자의 정보를 업데이트하는 API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  example: "변예섭"
+                kakaoId:
+                  type: string
+                  nullable: true
+                  example: "test"
+                instaId:
+                  type: string
+                  nullable: true
+                  example: "insta"
+                pin:
+                  type: string
+                  example: "1027"
+                mbti:
+                  type: string
+                  nullable: true
+                  example: "INFP"
+                bio:
+                  type: string
+                  nullable: true
+                  example: "안녕"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "변예섭"
+                      pin:
+                        type: string
+                        example: "$2b$04$q6Z7/JzGVjIul.nQvTzbd.9zlFeHMjg0QDrBiJlXzfrJbIs2w0UhS"
+                      studentId:
+                        type: string
+                        example: "2023216049"
+                      email:
+                        type: string
+                        example: "ys031027@skuniv.ac.kr"
+                      kakaoId:
+                        type: string
+                        nullable: true
+                        example: "test"
+                      instaId:
+                        type: string
+                        nullable: true
+                        example: "insta"
+                      mbti:
+                        type: string
+                        nullable: true
+                        example: "INFP"
+                      bio:
+                        type: string
+                        nullable: true
+                        example: "안녕"
+        "500":
+          description: Fail operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
+
+    /api/v1/users/update/pin:
+      patch:
+        tags:
+          - User
+        summary: Update User Pin
+        description: 사용자의 비밀번호(핀)을 업데이트하는 API
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: "ys031027@skuniv.ac.kr"
+                  pin:
+                    type: string
+                    example: "1234"
+        responses:
+          "200":
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    resultType:
+                      type: string
+                      example: "SUCCESS"
+                    error:
+                      type: string
+                      nullable: true
+                      example: null
+                    success:
+                      type: object
+                      properties:
+                        userId:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: "변예섭"
+                        studentId:
+                          type: string
+                          example: "2023216049"
+                        email:
+                          type: string
+                          example: "ys031027@skuniv.ac.kr"
+                        kakaoId:
+                          type: string
+                          nullable: true
+                          example: "test"
+                        instaId:
+                          type: string
+                          nullable: true
+                          example: "insta"
+                        mbti:
+                          type: string
+                          example: "INFP"
+                        bio:
+                          type: string
+                          nullable: true
+                          example: "안녕"
+          "500":
+            description: Fail operation
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/FailResponse"
+
+  /api/v1/users/update/pin:
+    patch:
+      tags:
+        - User
+      summary: Update User Pin
+      description: 사용자의 비밀번호(핀)을 업데이트하는 API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "ys031027@skuniv.ac.kr"
+                pin:
+                  type: string
+                  example: "1234"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "변예섭"
+                      studentId:
+                        type: string
+                        example: "2023216049"
+                      email:
+                        type: string
+                        example: "ys031027@skuniv.ac.kr"
+                      kakaoId:
+                        type: string
+                        nullable: true
+                        example: "test"
+                      instaId:
+                        type: string
+                        nullable: true
+                        example: "insta"
+                      mbti:
+                        type: string
+                        example: "INFP"
+                      bio:
+                        type: string
+                        nullable: true
+                        example: "안녕"
+        "500":
+          description: Fail operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
   # ======================== 메일 API ========================
 
   # 이메일 전송 API

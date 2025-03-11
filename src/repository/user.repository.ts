@@ -1,5 +1,5 @@
 import { prisma } from "../db.config.js";
-import { SignupDTO } from "../dto/user.dto.js";
+import { SignupDTO, UpdateUserDTO } from "../dto/user.dto.js";
 
 export class UserRepository {
   // 회원가입
@@ -12,6 +12,8 @@ export class UserRepository {
         pin: data.pin,
         instaId: data.instaId,
         kakaoId: data.kakaoId,
+        mbti: data.mbti,
+        bio: data.bio,
       },
     });
 
@@ -38,5 +40,27 @@ export class UserRepository {
     });
 
     return user;
+  }
+  // 이메일으로 회원 조회
+  async findUserByEmail(email: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    return user;
+  }
+  async updateUser(data: UpdateUserDTO) {
+    return await prisma.user.update({
+      where: { userId: data.userId },
+      data: data,
+    });
+  }
+  async updatePin(data: any) {
+    return await prisma.user.update({
+      where: { userId: data.userId },
+      data: data,
+    });
   }
 }
