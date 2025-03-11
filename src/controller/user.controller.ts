@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../service/user.service.js";
 import { StatusCodes } from "http-status-codes";
-import { toLoginDTO, toSignupDTO } from "../dto/user.dto.js";
+import { toLoginDTO, toSignupDTO, toUpdateUserDTO } from "../dto/user.dto.js";
 import { generateAccessToken, generateRefreshToken } from "../util/jwt.js";
 import { MatchingService } from "../service/matching.service.js";
 import { RoomService } from "../service/room.service.js";
+import { InvalidInputError } from "../util/error.js";
 
 const userService = new UserService();
 const matchingService = new MatchingService();
@@ -63,7 +64,7 @@ export const loginController = async (
   next: NextFunction
 ) => {
   try {
-    // DTP
+    // DTO
     const loginData = toLoginDTO(req.body);
 
     // 서비스 계층 호출
@@ -92,6 +93,53 @@ export const loginController = async (
     });
 
     res.status(StatusCodes.OK).success(loginUser);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+export const getUserInfoController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user?.id;
+
+  try {
+    if (!userId) {
+      throw new InvalidInputError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+    // 서비스 계층 호출
+    const userInfo = await userService.getUserDetail(userId);
+
+    res.status(StatusCodes.OK).success(userInfo);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+export const updateUserInfoController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user?.id;
+
+  try {
+    if (!userId) {
+      throw new InvalidInputError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+    const updateData = toUpdateUserDTO({ userId, ...req.body });
+
+    const updatedUser = await userService.updateUserInfo(updateData);
+
+    res.status(StatusCodes.OK).success(updatedUser);
   } catch (error) {
     console.error(error);
     next(error);

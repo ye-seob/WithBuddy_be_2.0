@@ -1,6 +1,6 @@
 import { UserRepository } from "../repository/user.repository.js";
 import { AlreadyExistError, NotFoundError } from "../util/error.js";
-import { loginDTO, SignupDTO } from "../dto/user.dto.js";
+import { loginDTO, SignupDTO, UpdateUserDTO } from "../dto/user.dto.js";
 import bcrypt from "bcryptjs";
 
 export class UserService {
@@ -68,5 +68,13 @@ export class UserService {
     const { pin, ...userWithoutPin } = user;
 
     return userWithoutPin;
+  }
+  async updateUserInfo(data: UpdateUserDTO) {
+    if (data.pin) {
+      const hashedPin = await bcrypt.hash(data.pin, 3);
+      data.pin = hashedPin;
+    }
+
+    return await this.userRepository.updateUser(data);
   }
 }
