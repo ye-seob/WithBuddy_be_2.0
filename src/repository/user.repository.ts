@@ -1,5 +1,5 @@
 import { prisma } from "../db.config.js";
-import { SignupDTO } from "../dto/user.dto.js";
+import { SignupDTO, UpdateUserDTO } from "../dto/user.dto.js";
 
 export class UserRepository {
   // 회원가입
@@ -50,5 +50,11 @@ export class UserRepository {
     });
 
     return user;
+  }
+  async updateUser(data: UpdateUserDTO) {
+    return await prisma.user.update({
+      where: { userId: data.userId },
+      data: data,
+    });
   }
 }
