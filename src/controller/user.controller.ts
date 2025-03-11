@@ -64,6 +64,9 @@ export const loginController = async (
   next: NextFunction
 ) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
+    const domain = process.env.COOKIE_DOMAIN || "localhost";
+
     // DTO 변환
     const loginData = toLoginDTO(req.body);
 
@@ -83,14 +86,14 @@ export const loginController = async (
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false,
+      sameSite: "lax",
       maxAge: 3 * 60 * 60 * 1000,
       path: "/",
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
+      sameSite: "lax",
       maxAge: 2 * 24 * 60 * 60 * 1000,
       path: "/",
     });
