@@ -89,6 +89,7 @@ export const loginController = async (
       secure: false, // HTTP에서는 secure: false로 설정
       sameSite: "lax", // HTTP에서는 "lax"로 설정
       domain, // 환경에 맞는 도메인 설정
+      maxAge: 3 * 60 * 60 * 1000,
       path: "/",
     });
 
@@ -97,6 +98,7 @@ export const loginController = async (
       secure: false, // HTTP에서는 secure: false로 설정
       sameSite: "lax", // HTTP에서는 "lax"로 설정
       domain, // 환경에 맞는 도메인 설정
+      maxAge: 2 * 24 * 60 * 60 * 1000,
       path: "/",
     });
 
