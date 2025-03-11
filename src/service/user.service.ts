@@ -15,7 +15,13 @@ export class UserService {
     const user = await this.userRepository.findUserByStudentId(data.studentId);
 
     if (user) {
-      throw new AlreadyExistError("이미 존재하는 유저입니다", data);
+      throw new AlreadyExistError("이미 존재하는 유저입니다", data.studentId);
+    }
+
+    const emailUser = await this.userRepository.findUserByEmail(data.email);
+
+    if (emailUser) {
+      throw new AlreadyExistError("이미 존재하는 유저입니다", data.email);
     }
 
     const hashedPin = await bcrypt.hash(data.pin, 10);

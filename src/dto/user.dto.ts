@@ -7,9 +7,11 @@ export interface SignupDTO {
   pin: string;
   instaId?: string;
   kakaoId?: string;
+  mbti: string;
+  bio?: string;
 }
 
-export const toSignupDTO = (body: SignupDTO): SignupDTO => {
+export const toSignupDTO = (body: any): SignupDTO => {
   if (!body.name) {
     throw new InvalidInputError("이름이 누락되었습니다.", "입력 값: 없음");
   }
@@ -22,6 +24,9 @@ export const toSignupDTO = (body: SignupDTO): SignupDTO => {
   if (!body.pin) {
     throw new InvalidInputError("PIN 코드가 누락되었습니다.", "입력 값: 없음");
   }
+  if (!body.mbti) {
+    throw new InvalidInputError("mbti가 누락되었습니다.", "입력 값: 없음");
+  }
 
   return {
     name: body.name,
@@ -30,6 +35,8 @@ export const toSignupDTO = (body: SignupDTO): SignupDTO => {
     pin: body.pin,
     instaId: body.instaId,
     kakaoId: body.kakaoId,
+    mbti: body.mbti,
+    bio: body.bio,
   };
 };
 

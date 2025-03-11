@@ -12,6 +12,8 @@ export class UserRepository {
         pin: data.pin,
         instaId: data.instaId,
         kakaoId: data.kakaoId,
+        mbti: data.mbti,
+        bio: data.bio,
       },
     });
 
@@ -34,6 +36,16 @@ export class UserRepository {
     const user = await prisma.user.findFirst({
       where: {
         studentId,
+      },
+    });
+
+    return user;
+  }
+  // 이메일으로 회원 조회
+  async findUserByEmail(email: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
       },
     });
 
