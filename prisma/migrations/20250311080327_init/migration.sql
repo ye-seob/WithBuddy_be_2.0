@@ -7,6 +7,8 @@ CREATE TABLE `user` (
     `email` VARCHAR(191) NOT NULL,
     `kakao_id` VARCHAR(191) NULL,
     `insta_id` VARCHAR(191) NULL,
+    `mbti` VARCHAR(191) NOT NULL,
+    `bio` VARCHAR(191) NULL,
 
     PRIMARY KEY (`user_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -88,6 +90,7 @@ CREATE TABLE `verification_code` (
 CREATE TABLE `room` (
     `room_id` INTEGER NOT NULL AUTO_INCREMENT,
     `room_name` VARCHAR(255) NOT NULL,
+    `room_type` ENUM('INDIVIDUAL', 'GROUP') NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`room_id`)
