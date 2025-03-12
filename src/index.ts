@@ -37,6 +37,7 @@ app.use(
       "https://skuwithbuddy.netlify.app",
       "https://www.skuwithbuddy.com",
       "https://skuwithbuddy.com",
+      "https://api.skuwithbuddy.com",
     ],
     credentials: true, // 쿠키 전송 허용
   })
