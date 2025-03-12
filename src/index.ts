@@ -16,7 +16,15 @@ const httpServer = createServer(app);
 // socket.io 설정
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://152.67.220.123:3000",
+      "https://skuwithbuddy.netlify.app",
+      "https://www.skuwithbuddy.com",
+      "https://skuwithbuddy.com",
+      "https://api.skuwithbuddy.com",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
