@@ -86,16 +86,18 @@ export const loginController = async (
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: "none",
       maxAge: 3 * 60 * 60 * 1000,
       path: "/",
+      secure: true,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: "none",
       maxAge: 2 * 24 * 60 * 60 * 1000,
       path: "/",
+      secure: true,
     });
 
     res.status(StatusCodes.OK).success(loginUser);
