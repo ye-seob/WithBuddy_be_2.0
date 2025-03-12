@@ -34,6 +34,9 @@ app.use(
       "http://localhost:3000",
       "http://localhost:5173",
       "http://152.67.220.123:3000",
+      "skuwithbuddy.netlify.app",
+      "www.skuwithbuddy.com",
+      "skuwithbuddy.com",
     ],
     credentials: true, // 쿠키 전송 허용
   })
