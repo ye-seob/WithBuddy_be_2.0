@@ -64,9 +64,6 @@ export const loginController = async (
   next: NextFunction
 ) => {
   try {
-    const isProduction = process.env.NODE_ENV === "production";
-    const domain = process.env.COOKIE_DOMAIN || "localhost";
-
     // DTO 변환
     const loginData = toLoginDTO(req.body);
 
@@ -171,6 +168,29 @@ export const updatePinController = async (
     const updatedUser = await userService.updatePin(email, pin);
 
     res.status(StatusCodes.OK).success(updatedUser);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+export const deleteUserController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user?.id;
+
+  try {
+    if (!userId) {
+      throw new InvalidInputError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+
+    const deletedUser = await userService.deleteUser(userId);
+
+    res.status(StatusCodes.OK).success(deletedUser);
   } catch (error) {
     console.error(error);
     next(error);
