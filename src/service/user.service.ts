@@ -109,4 +109,14 @@ export class UserService {
 
     return userWithoutPin;
   }
+
+  async deleteUser(userId: number) {
+    const user = await this.userRepository.findUserById(userId);
+
+    if (!user) {
+      throw new InvalidInputError("존재하지 않은 회원입니다", userId);
+    }
+
+    return await this.userRepository.deleteUser(userId);
+  }
 }
