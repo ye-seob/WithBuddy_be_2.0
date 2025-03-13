@@ -47,7 +47,7 @@ export class PostRepository {
     const posts = await prisma.post.findMany({
       where: {
         // lastPostId 가 있다면 그 뒤로 조회 없다면 undefined
-        postId: data.lastPostId ? { gt: data.lastPostId } : undefined,
+        postId: data.lastPostId ? { lt: data.lastPostId } : undefined,
         // tag 있다면 태그 테이블에서 조회
         postTags: data.tag
           ? {
