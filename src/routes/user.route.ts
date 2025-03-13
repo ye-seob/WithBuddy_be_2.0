@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteUserController,
   getUserInfoController,
   loginController,
   signupController,
@@ -25,6 +26,9 @@ router.get("/my", jwtAuthMiddleware, getUserInfoController);
 router.patch("/update", jwtAuthMiddleware, updateUserInfoController);
 
 // pin 재설정
-router.patch("/update/pin", jwtAuthMiddleware, updatePinController);
+router.patch("/update/pin", updatePinController);
+
+// 회원탈퇴
+router.delete("/delete", jwtAuthMiddleware, deleteUserController);
 
 export default router;

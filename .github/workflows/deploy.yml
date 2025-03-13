@@ -19,6 +19,8 @@ jobs:
           echo "JWT_SECRET_REFRESH_KEY=${{ secrets.JWT_SECRET_REFRESH_KEY }}" >> .env
           echo "EMAIL=${{ secrets.EMAIL }}" >> .env
           echo "SMTPPASSWORD=${{ secrets.SMTPPASSWORD }}" >> .env
+          echo "NODE_ENV=production" >> .env 
+          echo "COOKIE_DOMAIN= 140.245.65.254" >> .env
 
       - name: Copy .env file to EC2
         uses: appleboy/scp-action@master

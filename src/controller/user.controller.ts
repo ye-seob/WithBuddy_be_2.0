@@ -64,13 +64,13 @@ export const loginController = async (
   next: NextFunction
 ) => {
   try {
-    // DTO
+    // DTO 변환
     const loginData = toLoginDTO(req.body);
 
     // 서비스 계층 호출
     const loginUser = await userService.login(loginData);
 
-    // jwt 생성
+    // JWT 생성
     const accessToken = generateAccessToken({
       id: loginUser.userId,
       studentId: loginUser.studentId,
@@ -81,15 +81,20 @@ export const loginController = async (
       studentId: loginUser.studentId,
     });
 
-    // 쿠키로 JWT 토큰 전달
     res.cookie("accessToken", accessToken, {
-      httpOnly: true, // JavaScript에서 접근할 수 없게 함
-      secure: false, // HTTPS에서만 사용
+      httpOnly: true,
+      sameSite: "none",
+      maxAge: 3 * 60 * 60 * 1000,
+      path: "/",
+      secure: true,
     });
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, // JavaScript에서 접근할 수 없게 함
-      secure: false, // HTTPS에서만 사용
+      httpOnly: true,
+      sameSite: "none",
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+      path: "/",
+      secure: true,
     });
 
     res.status(StatusCodes.OK).success(loginUser);
@@ -98,6 +103,7 @@ export const loginController = async (
     next(error);
   }
 };
+
 export const getUserInfoController = async (
   req: Request,
   res: Response,
@@ -162,6 +168,29 @@ export const updatePinController = async (
     const updatedUser = await userService.updatePin(email, pin);
 
     res.status(StatusCodes.OK).success(updatedUser);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+export const deleteUserController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user?.id;
+
+  try {
+    if (!userId) {
+      throw new InvalidInputError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+
+    const deletedUser = await userService.deleteUser(userId);
+
+    res.status(StatusCodes.OK).success(deletedUser);
   } catch (error) {
     console.error(error);
     next(error);
