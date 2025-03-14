@@ -138,4 +138,34 @@ export class PostService {
 
     return await this.postRepository.findPostByUserId(userId);
   }
+
+  async likePost(data: UserPostDTO) {
+    const post = await this.postRepository.findPostById(data.postId);
+
+    if (!post) {
+      throw new InvalidInputError("게시글이 존재하지 않습니다.", data.postId);
+    }
+
+    const isLiked = await this.postRepository.isLikedByUser(data);
+
+    if (isLiked) {
+      throw new InvalidInputError("이미 좋아요를 눌렀습니다.", data.postId);
+    }
+
+    return await this.postRepository.addLike(data);
+  }
+
+  // 좋아요 취소
+  async unlikePost(data: UserPostDTO) {
+    const post = await this.postRepository.findPostById(data.postId);
+    if (!post) throw new Error("게시글이 존재하지 않습니다.");
+
+    const isLiked = await this.postRepository.isLikedByUser(data);
+
+    if (!isLiked) {
+      throw new InvalidInputError("좋아요를 누르지 않았습니다", data.postId);
+    }
+
+    return await this.postRepository.removeLike(data);
+  }
 }

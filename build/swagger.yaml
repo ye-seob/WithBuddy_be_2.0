@@ -1240,6 +1240,84 @@ paths:
                                   type: string
                                   example: "알고리즘"
 
+  # 게시물 좋아요 API
+  /api/v1/posts/{postId}/like:
+    post:
+      tags:
+        - Post
+      summary: 게시물 좋아요
+      description: 특정 게시물에 좋아요를 추가하는 API
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: 좋아요를 추가할 게시물의 ID
+          schema:
+            type: integer
+            example: 3
+      responses:
+        "200":
+          description: 성공적으로 좋아요가 추가된 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                        example: 4
+                      postId:
+                        type: integer
+                        example: 3
+
+  # 게시물 싫어요(좋아요 취소) API
+  /api/v1/posts/{postId}/unlike:
+    delete:
+      tags:
+        - Post
+      summary: 게시물 싫어요(좋아요 취소)
+      description: 특정 게시물의 좋아요를 취소하는 API
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: 좋아요를 취소할 게시물의 ID
+          schema:
+            type: integer
+            example: 3
+      responses:
+        "200":
+          description: 성공적으로 좋아요가 취소된 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                        description: 취소된 좋아요 수
+                        example: 1
+
   #====================== 댓글 API ===============
 
   # 댓글 작성 API

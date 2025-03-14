@@ -15,6 +15,7 @@ const httpServer = createServer(app);
 
 // socket.io 설정
 const io = new Server(httpServer, {
+  transports: ["websocket", "polling"],
   cors: {
     origin: [
       "http://localhost:3000",
@@ -26,6 +27,7 @@ const io = new Server(httpServer, {
       "https://api.skuwithbuddy.com",
     ],
     methods: ["GET", "POST"],
+
     credentials: true,
   },
 });
