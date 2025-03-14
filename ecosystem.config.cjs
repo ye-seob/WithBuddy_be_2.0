@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "withbuddy_be_2", // PM2 앱 이름
-      script: "./build/index.cjs", // 앱 실행 스크립트
+      script: "./build/index.cjs", // 컴파일된 JavaScript 파일
       instances: "max", // 클러스터 모드에서 인스턴스를 최대 수로 생성
       exec_mode: "cluster", // 클러스터 모드 실행
       merge_logs: true, // 로그 파일을 합쳐서 출력
