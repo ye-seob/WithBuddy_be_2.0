@@ -3,6 +3,7 @@ import {
   deleteUserController,
   getUserInfoController,
   loginController,
+  logoutController,
   signupController,
   updatePinController,
   updateUserInfoController,
@@ -27,6 +28,9 @@ router.patch("/update", jwtAuthMiddleware, updateUserInfoController);
 
 // pin 재설정
 router.patch("/update/pin", updatePinController);
+
+// 로그아웃
+router.post("/logout", jwtAuthMiddleware, logoutController);
 
 // 회원탈퇴
 router.delete("/delete", jwtAuthMiddleware, deleteUserController);
