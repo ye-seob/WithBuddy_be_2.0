@@ -3,8 +3,8 @@ module.exports = {
     {
       name: "withbuddy_be_2", // PM2 앱 이름
       script: "./build/index.cjs", // 앱 실행 스크립트
-      instances: "max", // 클러스터 모드에서 인스턴스를 최대 수로 생성
-      exec_mode: "cluster", // 클러스터 모드 실행
+      exec_mode: "fork", // fork 모드 (기본값)
+      instances: 1, // 단일 인스턴스 실행
       merge_logs: true, // 로그 파일을 합쳐서 출력
       autorestart: true, // 프로세스가 실패할 경우 자동 재시작
       watch: true, // 파일 변경 시 자동 재시작
