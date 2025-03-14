@@ -25,17 +25,19 @@ export class RoomService {
     });
   };
 
-  createIndividualRooms = async (userId: number, matchParticipants: any[]) => {
+  createIndividualRooms = async (
+    studentId: string,
+    userId: number,
+    matchParticipants: any[]
+  ) => {
     for (const participant of matchParticipants) {
-      const otherUserId = participant.userId;
-
-      // 본인은 제외
-      if (otherUserId === userId) continue;
+      const otherUserStudentId = participant.user.studentId;
+      if (otherUserStudentId === studentId) continue;
 
       // 개인 채팅방 생성
       const room = await this.roomRepository.createIndividualRoom(
-        userId,
-        otherUserId
+        studentId,
+        otherUserStudentId
       );
 
       // 방 만들걸로 유저와 방 연결
@@ -47,7 +49,7 @@ export class RoomService {
       // 방 만들걸로 유저와 방 연결
       this.roomRepository.createChatParticipant({
         roomId: room.roomId,
-        userId: otherUserId,
+        userId: participant.userId,
       });
     }
   };

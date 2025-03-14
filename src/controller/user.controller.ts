@@ -40,6 +40,7 @@ export const signupController = async (
     if (matchParticipants) {
       // 개인 채팅방 생성
       await roomService.createIndividualRooms(
+        createdUser.studentId,
         createdUser.userId,
         matchParticipants.matchParticipants
       );

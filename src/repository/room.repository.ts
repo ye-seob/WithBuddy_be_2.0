@@ -11,14 +11,10 @@ export class RoomRepository {
     });
   }
 
-  async createIndividualRoom(userId: number, otherUserId: number) {
-    // 방 이름 규칙은 1-2  userId가 작은 게 앞으로
+  async createIndividualRoom(studentId: string, otherUserStudentId: string) {
     const room = await prisma.room.create({
       data: {
-        roomName: `${Math.min(userId, otherUserId)}-${Math.max(
-          userId,
-          otherUserId
-        )}`,
+        roomName: `${otherUserStudentId}-${studentId}`,
         RoomType: "INDIVIDUAL",
       },
     });
