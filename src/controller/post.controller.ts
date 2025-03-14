@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { InvalidInputError } from "../util/error.js";
+import { InvalidInputError, TokenError } from "../util/error.js";
 import { PostService } from "../service/post.service.js";
 import {
   toCreatePostDTO,
@@ -20,7 +20,7 @@ export const createPostController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -48,7 +48,7 @@ export const getPostListController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -80,7 +80,7 @@ export const getPostDeatailController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -105,7 +105,7 @@ export const updatePostController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -133,7 +133,7 @@ export const deletePostController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -160,7 +160,7 @@ export const getMyPostsController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -186,7 +186,7 @@ export const likePostController = async (
     const userId = req.user?.id;
 
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -214,7 +214,7 @@ export const unLikePostController = async (
     const userId = req.user?.id;
 
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { InvalidInputError } from "../util/error.js";
+import { InvalidInputError, TokenError } from "../util/error.js";
 import { toCreateCommentDTO, toUserCommentDTO } from "../dto/comment.dto.js";
 import { CommentService } from "../service/comment.service.js";
 
@@ -15,7 +15,7 @@ export const createCommentController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -44,7 +44,7 @@ export const deleteCommentController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -74,7 +74,7 @@ export const getMyCommentsController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );

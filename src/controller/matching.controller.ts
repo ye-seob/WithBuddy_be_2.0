@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { MatchingService } from "../service/matching.service.js";
-import { InvalidInputError } from "../util/error.js";
+import { InvalidInputError, TokenError } from "../util/error.js";
 import { UserService } from "../service/user.service.js";
 import { toUserMatchingDTO } from "../dto/user.dto.js";
 
@@ -18,7 +18,7 @@ export const getPersonalMatchingController = async (
 
   try {
     if (!studentId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -42,7 +42,7 @@ export const getGroupMatchingController = async (
 
   try {
     if (!studentId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );

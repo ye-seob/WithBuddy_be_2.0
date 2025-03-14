@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "./jwt.js";
-import { InvalidInputError } from "./error.js";
+import { InvalidInputError, TokenError } from "./error.js";
 
 declare global {
   namespace Express {
@@ -85,6 +85,7 @@ export const errorMiddleware = (
   res.status(statusCode).json({
     resultType: "ERROR",
     error: {
+      statusCode,
       errorCode,
       reason,
       data,
@@ -105,10 +106,7 @@ export const jwtAuthMiddleware = (
     const token = req.cookies.accessToken;
 
     if (!token) {
-      throw new InvalidInputError(
-        "토큰이 존재하지 않습니다",
-        "입력 값: " + token
-      );
+      throw new TokenError("토큰이 존재하지 않습니다", "입력 값: " + token);
     }
 
     const decoded = verifyToken(token) as { id: number; studentId: string };

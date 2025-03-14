@@ -5,7 +5,7 @@ import { toLoginDTO, toSignupDTO, toUpdateUserDTO } from "../dto/user.dto.js";
 import { generateAccessToken, generateRefreshToken } from "../util/jwt.js";
 import { MatchingService } from "../service/matching.service.js";
 import { RoomService } from "../service/room.service.js";
-import { InvalidInputError } from "../util/error.js";
+import { InvalidInputError, TokenError } from "../util/error.js";
 
 const userService = new UserService();
 const matchingService = new MatchingService();
@@ -113,7 +113,7 @@ export const getUserInfoController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -136,7 +136,7 @@ export const updateUserInfoController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );
@@ -182,7 +182,7 @@ export const deleteUserController = async (
 
   try {
     if (!userId) {
-      throw new InvalidInputError(
+      throw new TokenError(
         "잘못된 토큰 값입니다.",
         "입력 값: " + req.headers.authorization
       );

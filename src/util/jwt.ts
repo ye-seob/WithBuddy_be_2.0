@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
-import { InvalidInputError } from "./error.js";
+import { InvalidInputError, TokenError } from "./error.js";
 dotenv.config();
 
 const SECRET_ACCESS_KEY = process.env.JWT_SECRET_ACCESS_KEY!;
@@ -29,13 +29,13 @@ export const refreshAccessToken = async (
     const { refreshToken } = req.cookies;
 
     if (!refreshToken) {
-      throw new InvalidInputError("리프레시 토큰이 존재하지 않습니다", null);
+      throw new TokenError("리프레시 토큰이 존재하지 않습니다", null);
     }
 
     // 리프레시 토큰 검증
     jwt.verify(refreshToken, SECRET_REFRESH_KEY, (err: any, decoded: any) => {
       if (err) {
-        throw new InvalidInputError("리프레시 토큰이 유효하지 않습니다", null);
+        throw new TokenError("리프레시 토큰이 유효하지 않습니다", null);
       }
 
       // 리프레시 토큰이 유효하다면 새로운 엑세스 토큰 발급

@@ -62,3 +62,15 @@ export class DBError extends Error {
     this.data = data;
   }
 }
+export class TokenError extends Error {
+  statusCode: number = 401;
+  errorCode: string = "Token_Error";
+  reason: string;
+  data: any;
+
+  constructor(reason: string, data: any) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}

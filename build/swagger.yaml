@@ -1523,6 +1523,8 @@ components:
         error:
           type: object
           properties:
+            statusCode:
+              type: number
             errorCode:
               type: string
             reason:
