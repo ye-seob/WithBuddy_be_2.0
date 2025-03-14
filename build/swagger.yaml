@@ -849,13 +849,13 @@ paths:
       summary: Get Post List
       description: 게시물 목록을 조회하는 API
       parameters:
-        - name: tag
+        - name: sortBy
           in: query
-          description: 게시물 태그 (선택 사항)
+          description: 정렬 조건 (선택 사항) - 최신순, 댓글순, 공감순
           required: false
           schema:
             type: string
-            example: "프로그래밍"
+            example: "댓글순"
         - name: lastPostId
           in: query
           description: 마지막 게시물 ID (선택 사항)
@@ -897,10 +897,10 @@ paths:
                           example: "오늘은 데이터베이스 설계를 공부했어요. 처음에는 어려웠지만 점점 이해가 가더라고요."
                         likeCount:
                           type: integer
-                          example: 0
+                          example: 10
                         dislikeCount:
                           type: integer
-                          example: 0
+                          example: 2
                         createdAt:
                           type: string
                           format: date-time
@@ -914,21 +914,54 @@ paths:
                           items:
                             type: object
                             properties:
-                              postId:
-                                type: integer
-                                example: 17
                               tagId:
                                 type: integer
                                 example: 1
-                              tag:
-                                type: object
-                                properties:
-                                  tagId:
-                                    type: integer
-                                    example: 1
-                                  name:
-                                    type: string
-                                    example: "프로그래밍"
+                              name:
+                                type: string
+                                example: "프로그래밍"
+                        comments:
+                          type: array
+                          description: 댓글 목록
+                          items:
+                            type: object
+                            properties:
+                              commentId:
+                                type: integer
+                                example: 6
+                              userId:
+                                type: integer
+                                example: 4
+                              postId:
+                                type: integer
+                                example: 17
+                              content:
+                                type: string
+                                example: "정말 유익한 글이네요!"
+                              createdAt:
+                                type: string
+                                format: date-time
+                                example: "2025-03-14T08:26:52.442Z"
+                              updatedAt:
+                                type: string
+                                format: date-time
+                                example: null
+                              parentCommentId:
+                                type: integer
+                                nullable: true
+                                example: null
+                        likedBy:
+                          type: array
+                          description: 이 게시글에 좋아요를 누른 사용자 목록
+                          items:
+                            type: object
+                            properties:
+                              userId:
+                                type: integer
+                                example: 4
+                              postId:
+                                type: integer
+                                example: 17
 
   # 게시물 수정 API
   /api/v1/posts/update/{postId}:

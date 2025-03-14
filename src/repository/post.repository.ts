@@ -43,34 +43,16 @@ export class PostRepository {
   }
 
   // 글 목록 조회
-  async findPostList(data: GetPostListDTO) {
+  async findPostList(data: GetPostListDTO, orderBy: any) {
     const posts = await prisma.post.findMany({
       where: {
-        // lastPostId 가 있다면 그 뒤로 조회 없다면 undefined
         postId: data.lastPostId ? { lt: data.lastPostId } : undefined,
-        // tag 있다면 태그 테이블에서 조회
-        postTags: data.tag
-          ? {
-              some: {
-                tag: {
-                  name: data.tag,
-                },
-              },
-            }
-          : undefined,
       },
-      // 최신 순으로 정렬
-      orderBy: {
-        createdAt: "desc",
-      },
-      // 한 번에 10개 게시글만 불러오기
+      orderBy,
       take: 10,
       include: {
-        postTags: {
-          include: {
-            tag: true, // 태그 정보도  포함
-          },
-        },
+        comments: true,
+        likedBy: true,
       },
     });
 
