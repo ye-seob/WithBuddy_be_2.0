@@ -175,3 +175,58 @@ export const getMyPostsController = async (
     next(error);
   }
 };
+// 좋아요 추가
+export const likePostController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const postId = parseInt(req.params.postId);
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new InvalidInputError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+
+    const data = toUserPostDTO({ userId, postId });
+
+    const like = await postService.likePost(data);
+
+    res.status(StatusCodes.OK).success(like);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+// 좋아요 취소
+export const unLikePostController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const postId = parseInt(req.params.postId);
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new InvalidInputError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+
+    const data = toUserPostDTO({ userId, postId });
+
+    const unLike = await postService.unlikePost(data);
+
+    res.status(StatusCodes.OK).success(unLike);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};

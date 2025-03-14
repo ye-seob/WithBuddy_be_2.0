@@ -7,6 +7,8 @@ import {
   getMyPostsController,
   getPostDeatailController,
   getPostListController,
+  likePostController,
+  unLikePostController,
   updatePostController,
 } from "../controller/post.controller.js";
 
@@ -31,5 +33,11 @@ router.delete("/delete/:postId", jwtAuthMiddleware, deletePostController);
 
 // 특정 글 상세 조회
 router.get("/:postId", jwtAuthMiddleware, getPostDeatailController);
+
+// 좋아요 추가
+router.post("/:postId/like", jwtAuthMiddleware, likePostController);
+
+// 좋아요 취소
+router.delete("/:postId/unlike", jwtAuthMiddleware, unLikePostController);
 
 export default router;
