@@ -5,14 +5,16 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-}model User {
-  userId    Int   @id @default(autoincrement()) @map("user_id")
+}
+
+model User {
+  userId    Int       @id @default(autoincrement()) @map("user_id")
   name      String  
   pin       String
-  studentId String  @map("student_id")
+  studentId String    @map("student_id")
   email     String
-  kakaoId   String? @map("kakao_id")
-  instaId   String? @map("insta_id")
+  kakaoId   String?   @map("kakao_id")
+  instaId   String?   @map("insta_id")
   mbti      String
   bio       String? 
 
@@ -21,6 +23,7 @@ datasource db {
   comments Comment[]
   chatParticipants ChatParticipant[]
   messages Message[]
+  postLikes PostLike[] // 좋아요 관계 추가
 
   @@map("user")
 }
@@ -58,20 +61,34 @@ enum RoomType {
 }
 
 model Post {
-  postId       Int   @id @default(autoincrement())
+  postId       Int       @id @default(autoincrement())
   userId       Int
-  title        String   @db.VarChar(255)
-  content      String   @db.Text
-  likeCount    Int      @default(0) @map("like_count")
-  dislikeCount Int      @default(0) @map("dislike_count")
-  createdAt    DateTime @default(now()) @map("created_at")
+  title        String    @db.VarChar(255)
+  content      String    @db.Text
+  likeCount    Int       @default(0) @map("like_count")
+  dislikeCount Int       @default(0) @map("dislike_count")
+  createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @map("updated_at")
 
-  user      User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [userId], onDelete: Cascade)
   comments  Comment[]
   postTags  PostTag[]
+  likedBy      PostLike[]
 
+
+   
   @@map("post")
+}
+
+model PostLike {
+  userId  Int  @map("user_id")
+  postId  Int  @map("post_id")
+
+  user    User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  post    Post  @relation(fields: [postId], references: [postId])
+
+  @@id([userId, postId])
+  @@map("post_like")
 }
 
 model Comment {
@@ -92,8 +109,8 @@ model Comment {
 }
 
 model PostTag {
-  postId Int
-  tagId  Int @map("tag_id")
+  postId Int  @map("post_id")
+  tagId  Int  @map("tag_id")
 
   post Post @relation(fields: [postId], references: [postId])
   tag  Tag  @relation(fields: [tagId], references: [tagId])
@@ -114,12 +131,12 @@ model Tag {
 
 model VerificationCode {
   id          Int    @id @default(autoincrement())
-  email       String    @unique
-  code        String    @db.VarChar(6) 
-  expiresAt   DateTime  @map("expires_at") // 만료 시간
-  createdAt   DateTime  @default(now()) @map("created_at")
+  email       String @unique
+  code        String @db.VarChar(6) 
+  expiresAt   DateTime @map("expires_at") 
+  createdAt   DateTime @default(now()) @map("created_at")
 
-   @@map("verification_code")
+  @@map("verification_code")
 }
 
 model Room {

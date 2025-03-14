@@ -113,6 +113,11 @@ export class PostRepository {
             },
           },
         },
+        _count: {
+          select: {
+            likedBy: true,
+          },
+        },
       },
     });
 
@@ -161,5 +166,32 @@ export class PostRepository {
     });
 
     return deletedPost;
+  }
+  async addLike(data: UserPostDTO) {
+    return await prisma.postLike.create({
+      data: {
+        userId: data.userId,
+        postId: data.postId,
+      },
+    });
+  }
+
+  async removeLike(data: UserPostDTO) {
+    return await prisma.postLike.deleteMany({
+      where: {
+        userId: data.userId,
+        postId: data.postId,
+      },
+    });
+  }
+
+  async isLikedByUser(data: UserPostDTO) {
+    const like = await prisma.postLike.findFirst({
+      where: {
+        userId: data.userId,
+        postId: data.postId,
+      },
+    });
+    return like !== null;
   }
 }
