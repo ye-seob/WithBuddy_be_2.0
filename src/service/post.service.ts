@@ -43,8 +43,18 @@ export class PostService {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
 
+    let orderBy: any = { createdAt: "desc" }; // 기본값: 최신순
+
+    if (data.sortBy === "댓글순") {
+      orderBy = { comments: { _count: "desc" } };
+    }
+
+    if (data.sortBy === "공감순") {
+      orderBy = { likedBy: { _count: "desc" } };
+    }
+
     // 게시글 목록 조회
-    const posts = await this.postRepository.findPostList(data);
+    const posts = await this.postRepository.findPostList(data, orderBy);
 
     return posts;
   }

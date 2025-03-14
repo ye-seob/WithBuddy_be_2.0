@@ -59,8 +59,15 @@ export const getPostListController = async (
 
     const tag = req.query.tag ? String(req.query.tag) : null;
 
+    const sortBy = req.query.sortBy ? String(req.query.sortBy) : null;
+
     // DTO
-    const getPostListData = toGetPostListDTO({ userId, lastPostId, tag });
+    const getPostListData = toGetPostListDTO({
+      userId,
+      lastPostId,
+      tag,
+      sortBy,
+    });
 
     const posts = await postService.getPostList(getPostListData);
     res.status(StatusCodes.OK).success(posts);

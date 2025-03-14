@@ -26,7 +26,7 @@ export const toCreatePostDTO = (body: any): CreatePostDTO => {
 export interface GetPostListDTO {
   userId: number;
   lastPostId: number | null;
-  tag: string | null;
+  sortBy: string | null;
 }
 
 export const toGetPostListDTO = (data: any): GetPostListDTO => {
@@ -35,12 +35,12 @@ export const toGetPostListDTO = (data: any): GetPostListDTO => {
   }
 
   const lastPostId = data.lastPostId ? Number(data.lastPostId) : null; // 숫자 변환, 없으면 null
-  const tag = data.tag ? String(data.tag) : null; // 없으면 null
+  const sortBy = data.sortBy ? String(data.sortBy) : null;
 
   return {
     userId: data.userId,
     lastPostId,
-    tag,
+    sortBy,
   };
 };
 
