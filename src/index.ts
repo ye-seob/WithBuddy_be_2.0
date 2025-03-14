@@ -9,50 +9,47 @@ import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { ChatController } from "./controller/chat.controller.js";
+import { createAdapter } from "@socket.io/cluster-adapter";
+import { setupWorker } from "@socket.io/sticky";
 
 const app = express();
 const httpServer = createServer(app);
 
+// CORS 설정
+const corsOptions = {
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://152.67.220.123:3000",
+    "https://skuwithbuddy.netlify.app",
+    "https://www.skuwithbuddy.com",
+    "https://skuwithbuddy.com",
+    "https://api.skuwithbuddy.com",
+  ],
+  methods: ["GET", "POST"],
+  credentials: true,
+};
+
 // socket.io 설정
 const io = new Server(httpServer, {
-  cors: {
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:5173",
-      "http://152.67.220.123:3000",
-      "https://skuwithbuddy.netlify.app",
-      "https://www.skuwithbuddy.com",
-      "https://skuwithbuddy.com",
-      "https://api.skuwithbuddy.com",
-    ],
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
+  cors: corsOptions,
+  transports: ["websocket"],
 });
+
+// PM2 클러스터 모드를 위한 어댑터 설정
+io.adapter(createAdapter());
+
+// PM2 클러스터 모드를 위한 워커 설정
+setupWorker(io);
 
 new ChatController(io);
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 
 app.use(cookieParser());
-
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:5173",
-      "http://152.67.220.123:3000",
-      "https://skuwithbuddy.netlify.app",
-      "https://www.skuwithbuddy.com",
-      "https://skuwithbuddy.com",
-      "https://api.skuwithbuddy.com",
-    ],
-    credentials: true, // 쿠키 전송 허용
-  })
-);
-
-app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
-app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const swaggerSpec = YAML.load(path.join("./build/swagger.yaml"));
 
@@ -66,6 +63,7 @@ app.use("/swagger-ui", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // 실패 응답 처리 미들웨어
 app.use(errorMiddleware);
 
+// PM2 클러스터 모드에서는 마스터 프로세스만 포트를 리스닝
 httpServer.listen(PORT, "0.0.0.0", () => {
-  console.log("Server running on all interfaces, port 3000");
+  console.log(`Worker ${process.pid} started, listening on port ${PORT}`);
 });
