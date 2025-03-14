@@ -190,7 +190,51 @@ export const deleteUserController = async (
 
     const deletedUser = await userService.deleteUser(userId);
 
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+
     res.status(StatusCodes.OK).success(deletedUser);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+export const logoutController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user?.id;
+
+  try {
+    if (!userId) {
+      throw new TokenError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+    res.status(StatusCodes.OK).success("로그아웃 되었습니다");
   } catch (error) {
     console.error(error);
     next(error);
