@@ -8,6 +8,7 @@ import {
   getPostDeatailController,
   getPostListController,
   likePostController,
+  searchPostsController,
   unLikePostController,
   updatePostController,
 } from "../controller/post.controller.js";
@@ -30,6 +31,9 @@ router.put("/update/:postId", jwtAuthMiddleware, updatePostController);
 
 // 글 삭제
 router.delete("/delete/:postId", jwtAuthMiddleware, deletePostController);
+
+// 글 검색
+router.get("/search", jwtAuthMiddleware, searchPostsController);
 
 // 특정 글 상세 조회
 router.get("/:postId", jwtAuthMiddleware, getPostDeatailController);
