@@ -17,13 +17,14 @@ export class CommentService {
 
   // 댓글 생성
   async createComment(data: CreateCommentDTO) {
-    // 유효성 검사
+    // 유저 조회
     const user = await this.userRepository.findUserById(data.userId);
 
     if (!user) {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
 
+    // 글 조회
     const post = await this.postRepository.findPostById(data.postId);
 
     if (!post) {
@@ -50,14 +51,14 @@ export class CommentService {
 
   // 글 삭제
   async deleteComment(data: UserCommentDTO) {
-    // 유효성 검사
+    // 유저 조회
     const user = await this.userRepository.findUserById(data.userId);
 
     if (!user) {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
 
-    // 유효성 검사
+    // 댓글 조회
     const comment = await this.commentRepository.findCommentById(
       data.commentId
     );
@@ -66,6 +67,7 @@ export class CommentService {
       throw new InvalidInputError("존재하지 않는 댓글입니다", data.commentId);
     }
 
+    // 유저가 쓴 댓글인지 확인
     const isOwner = await this.commentRepository.isCommentOwner(data);
 
     if (!isOwner) {
@@ -81,7 +83,7 @@ export class CommentService {
   }
 
   async getMyComments(userId: number) {
-    // 유효성 검사
+    // 유저 조회
     const user = await this.userRepository.findUserById(userId);
 
     if (!user) {

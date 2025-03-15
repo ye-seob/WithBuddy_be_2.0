@@ -15,7 +15,7 @@ model User {
   email     String
   kakaoId   String?   @map("kakao_id")
   instaId   String?   @map("insta_id")
-  mbti      String
+  mbti      String?
   bio       String? 
 
   matchParticipants MatchParticipant[]
@@ -23,7 +23,7 @@ model User {
   comments Comment[]
   chatParticipants ChatParticipant[]
   messages Message[]
-  postLikes PostLike[] // 좋아요 관계 추가
+  postLikes PostLike[] 
 
   @@map("user")
 }

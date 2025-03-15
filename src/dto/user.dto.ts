@@ -23,9 +23,6 @@ export const toSignupDTO = (body: any): SignupDTO => {
   if (!body.pin) {
     throw new InvalidInputError("PIN 코드가 누락되었습니다.", "입력 값: 없음");
   }
-  if (!body.mbti) {
-    throw new InvalidInputError("mbti가 누락되었습니다.", "입력 값: 없음");
-  }
 
   return {
     name: body.name,
@@ -44,7 +41,7 @@ export interface loginDTO {
   pin: string;
 }
 
-export const toLoginDTO = (body: loginDTO): loginDTO => {
+export const toLoginDTO = (body: any): loginDTO => {
   if (!body.studentId) {
     throw new InvalidInputError("학번이 누락되었습니다.", "입력 값: 없음");
   }
@@ -64,7 +61,7 @@ export interface UserMatchingDTO {
   targetUserId: number; // 요청받은 상대 유저의 ID
 }
 
-export const toUserMatchingDTO = (body: UserMatchingDTO): UserMatchingDTO => {
+export const toUserMatchingDTO = (body: any): UserMatchingDTO => {
   if (!body.loggedInUserId) {
     throw new InvalidInputError(
       "현재 로그인한 user의 id값이 누락되었습니다",
