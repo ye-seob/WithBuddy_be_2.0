@@ -20,12 +20,7 @@ export class CommentRepository {
   async createComment(data: CreateCommentDTO) {
     try {
       const newComment = await prisma.comment.create({
-        data: {
-          postId: data.postId,
-          userId: data.userId,
-          parentCommentId: data.parentCommentId,
-          content: data.content,
-        },
+        data,
       });
 
       return newComment;

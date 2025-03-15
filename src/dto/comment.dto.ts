@@ -33,7 +33,7 @@ export interface UserCommentDTO {
 }
 export const toUserCommentDTO = (body: any): UserCommentDTO => {
   if (!body.userId) {
-    throw new InvalidInputError("user의 id가 누락되었습니다", "입력 값: 없음");
+    throw new InvalidInputError("userId가 누락되었습니다", "입력 값: 없음");
   }
 
   if (!body.commentId) {
