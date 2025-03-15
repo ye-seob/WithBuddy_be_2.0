@@ -4,7 +4,7 @@ info:
   version: 1.0.11
 servers:
   - url: http://localhost:3000
-  - url: https://skuwithbuddy.com
+  - url: https://api.skuwithbuddy.com
 tags:
   - name: User
     description: User API Tag
@@ -99,6 +99,7 @@ paths:
                         example: "ye.seob_"
                       mbti:
                         type: string
+                        nullable: true
                         example: "ISTP"
                       bio:
                         type: string
@@ -413,6 +414,7 @@ paths:
                 schema:
                   $ref: "#/components/schemas/FailResponse"
 
+  # pin 번호 업데이트
   /api/v1/users/update/pin:
     patch:
       tags:
@@ -483,6 +485,104 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FailResponse"
+
+  # 회원 탈퇴
+  /api/v1/users/delete:
+    delete:
+      tags:
+        - User
+      summary: Delete User
+      description: 회원 탈퇴 API
+      requestBody:
+        required: false
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                        example: 7
+                      name:
+                        type: string
+                        example: "테스트"
+                      pin:
+                        type: string
+                        example: "$2b$10$HwgpWTZFKV8bFMjd2IlIj.yySuhGjKD9cgIn04KKjiIcedG2cGX.W"
+                      studentId:
+                        type: string
+                        example: "2022322116003"
+                      email:
+                        type: string
+                        example: "ys01312201227@skuniv.ac.kr"
+                      kakaoId:
+                        type: string
+                        nullable: true
+                        example: null
+                      instaId:
+                        type: string
+                        nullable: true
+                        example: "ye.seob_"
+                      mbti:
+                        type: string
+                        nullable: true
+                        example: null
+                      bio:
+                        type: string
+                        nullable: true
+                        example: "안녕하세요"
+        "500":
+          description: Fail operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
+
+  # 로그아웃
+  /api/v1/users/logout:
+    post:
+      tags:
+        - User
+      summary: User Logout
+      description: 회원 로그아웃 API
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: "SUCCESS"
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  success:
+                    type: string
+                    example: "로그아웃 되었습니다"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailResponse"
+
   # ======================== 메일 API ========================
 
   # 이메일 전송 API

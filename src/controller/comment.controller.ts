@@ -50,7 +50,7 @@ export const deleteCommentController = async (
       );
     }
 
-    // DTO 변환
+    // DTO
     const deleteCommentData = toUserCommentDTO({ userId, commentId });
 
     // 서비스 계층 호출

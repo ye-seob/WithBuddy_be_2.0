@@ -7,7 +7,7 @@ module.exports = {
       instances: 1, // 단일 인스턴스 실행
       merge_logs: true, // 로그 파일을 합쳐서 출력
       autorestart: true, // 프로세스가 실패할 경우 자동 재시작
-      watch: true, // 파일 변경 시 자동 재시작
+      watch: true, // 파일 변경 시 자 동 재시작
       ignore_watch: ["node_modules", "logs"], // 변경을 무시할 디렉토리
       max_memory_restart: "512M", // 메모리가 512MB 이상일 경우 재시작
       env: {
