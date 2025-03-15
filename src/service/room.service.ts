@@ -8,9 +8,14 @@ export class RoomService {
     this.roomRepository = new RoomRepository();
   }
 
+  // 그룹 채팅방 생성 (회원가입시 호출)
   createGroupRoom = async (data: any) => {
+    // 이름 규칙
+    // 그룹+그룹번호
+
     const roomName = "group" + data.groupNum;
-    // 그룹 채팅방이 있는지 검사
+
+    // 그룹 채팅방이 있는지 검사 , 누가 만들어놨을 수 도 있으니까
     let room = await this.roomRepository.findGroupRoomByName(roomName);
 
     // 없다면 그룹 채팅방 생성
@@ -18,13 +23,14 @@ export class RoomService {
       room = await this.roomRepository.createGroupRoom(roomName);
     }
 
-    // 있었거나 새로 만들었으면 그 방과 유저 매핑
+    // 만들어진 그 방과 유저 매핑
     await this.roomRepository.createChatParticipant({
       roomId: room.roomId,
       userId: data.userId,
     });
   };
 
+  // 개인 채팅방 생성 (회원가입시 호출)
   createIndividualRooms = async (
     studentId: string,
     userId: number,
@@ -32,6 +38,8 @@ export class RoomService {
   ) => {
     for (const participant of matchParticipants) {
       const otherUserStudentId = participant.user.studentId;
+
+      // 본인이라면 패스
       if (otherUserStudentId === studentId) continue;
 
       // 개인 채팅방 생성
@@ -46,18 +54,20 @@ export class RoomService {
         userId,
       });
 
-      // 방 만들걸로 유저와 방 연결
+      // 방 만들걸로 상대 유저와 방 연결
       this.roomRepository.createChatParticipant({
         roomId: room.roomId,
         userId: participant.userId,
       });
     }
   };
-  async getUserRooms(userId: number) {
-    const rooms = await this.roomRepository.findRoomsByUserId(userId);
 
-    return rooms;
+  // 유저의 채팅방 조회
+  async getUserRooms(userId: number) {
+    return await this.roomRepository.findRoomsByUserId(userId);
   }
+
+  // 유저가 해당 방에 있는지 확인
   async isUserInRoom(data: UserRoomDTO) {
     return await this.roomRepository.isUserInRoom(data);
   }

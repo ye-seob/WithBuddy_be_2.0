@@ -7,16 +7,7 @@ export class UserRepository {
   async createUser(data: SignupDTO) {
     try {
       const user = await prisma.user.create({
-        data: {
-          name: data.name,
-          email: data.email,
-          studentId: data.studentId,
-          pin: data.pin,
-          instaId: data.instaId,
-          kakaoId: data.kakaoId,
-          mbti: data.mbti,
-          bio: data.bio,
-        },
+        data,
       });
 
       return user;
@@ -98,7 +89,7 @@ export class UserRepository {
   async deleteUser(userId: number) {
     try {
       return await prisma.user.delete({
-        where: { userId: userId },
+        where: { userId },
       });
     } catch (error) {
       throw new DBError("DB 접근 중 에러 발생", error);
