@@ -4,6 +4,7 @@ export interface CreatePostDTO {
   userId: number;
   title: string;
   content: string;
+  postTags?: string[];
 }
 
 export const toCreatePostDTO = (body: any): CreatePostDTO => {
@@ -21,8 +22,10 @@ export const toCreatePostDTO = (body: any): CreatePostDTO => {
     userId: body.userId,
     title: body.title,
     content: body.content,
+    postTags: body.postTags,
   };
 };
+
 export interface GetPostListDTO {
   userId: number;
   lastPostId: number | null;
@@ -49,6 +52,7 @@ export interface UpdatePostDTO {
   postId: number;
   title: string;
   content: string;
+  postTags?: string[];
 }
 
 export const toUpdatePostDTO = (data: any): UpdatePostDTO => {
@@ -76,14 +80,19 @@ export const toUpdatePostDTO = (data: any): UpdatePostDTO => {
       "입력 값: 없음"
     );
   }
+  if (!data.postTags) {
+    data.postTags = null;
+  }
 
   return {
     userId: Number(data.userId),
     postId: Number(data.postId),
     title: String(data.title),
     content: String(data.content),
+    postTags: data.postTags,
   };
 };
+
 export interface UserPostDTO {
   userId: number;
   postId: number;

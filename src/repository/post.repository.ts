@@ -11,6 +11,7 @@ export class PostRepository {
   // 글 생성
   async createPost(data: CreatePostDTO) {
     try {
+      // 글 생성만 처리
       const post = await prisma.post.create({
         data: {
           userId: data.userId,
@@ -18,7 +19,42 @@ export class PostRepository {
           content: data.content,
         },
       });
+
       return post;
+    } catch (error) {
+      throw new DBError("DB 접근 중 에러 발생", error);
+    }
+  }
+  //
+  async createPostTags(data: { postId: number; postTags: string[] }) {
+    try {
+      return await prisma.$transaction(async (tx) => {
+        const tagIds = await Promise.all(
+          data.postTags.map(async (tagName) => {
+            // 먼저 만들어진 태그가 있는지 확인
+            const existingTag = await tx.tag.findFirst({
+              where: { name: tagName },
+            });
+
+            // 태그가 있다면 그 tagId 리턴
+            if (existingTag) {
+              return existingTag.tagId;
+            }
+
+            // 없다면 새로 만들어서 리턴
+            const newTag = await tx.tag.create({
+              data: { name: tagName },
+            });
+
+            return newTag.tagId;
+          })
+        );
+
+        // 만들어진 태그들과 게시글 매핑
+        await tx.postTag.createMany({
+          data: tagIds.map((tagId) => ({ postId: data.postId, tagId })),
+        });
+      });
     } catch (error) {
       throw new DBError("DB 접근 중 에러 발생", error);
     }
@@ -61,9 +97,22 @@ export class PostRepository {
         },
         orderBy,
         take: 10,
-        include: {
-          comments: true,
-          likedBy: true,
+        select: {
+          postId: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          likedBy: {
+            where: {
+              userId: data.userId,
+            },
+          },
+          _count: {
+            select: {
+              comments: true,
+              likedBy: true,
+            },
+          },
         },
       });
       return posts;
@@ -77,9 +126,10 @@ export class PostRepository {
     try {
       const post = await prisma.post.findFirst({
         where: {
-          postId: postId,
+          postId,
         },
         include: {
+          // 수정
           user: {
             // 작성자 정보
             select: {
@@ -137,24 +187,66 @@ export class PostRepository {
   }
 
   // 글 업데이트
-  async updatePost(data: UpdatePostDTO) {
+  async updatePostTags(data: { postId: number; postTags: string[] }) {
     try {
-      const updatedPost = await prisma.post.update({
-        where: {
-          postId: data.postId,
-        },
-        data: {
-          title: data.title,
-          content: data.content,
-          updatedAt: new Date(),
-        },
+      return await prisma.$transaction(async (tx) => {
+        // 기존 태그 삭제
+        await tx.postTag.deleteMany({
+          where: {
+            postId: data.postId,
+          },
+        });
+
+        if (data.postTags !== null) {
+          // 새로운 태그 이름으로 태그 ID를 가져옴
+          const tags = await tx.tag.findMany({
+            where: {
+              name: {
+                in: data.postTags, // 입력된 태그 이름 배열
+              },
+            },
+          });
+
+          const postTags = tags.map((tag) => ({
+            postId: data.postId,
+            tagId: tag.tagId,
+          }));
+
+          // 새 태그 추가
+          await tx.postTag.createMany({
+            data: postTags,
+          });
+        }
       });
-      return updatedPost;
     } catch (error) {
       throw new DBError("DB 접근 중 에러 발생", error);
     }
   }
 
+  // 글 수정
+  async updatePost(data: UpdatePostDTO) {
+    try {
+      const updatedPost = await prisma.$transaction(async (tx) => {
+        // 글 수정
+        const post = await tx.post.update({
+          where: {
+            postId: data.postId,
+          },
+          data: {
+            title: data.title,
+            content: data.content,
+            updatedAt: new Date(),
+          },
+        });
+
+        return post;
+      });
+
+      return updatedPost;
+    } catch (error) {
+      throw new DBError("DB 접근 중 에러 발생", error);
+    }
+  }
   // 글 삭제
   async deletePost(postId: number) {
     try {
@@ -171,7 +263,7 @@ export class PostRepository {
   async deletePostTag(postId: number) {
     try {
       const deletedPost = await prisma.postTag.deleteMany({
-        where: { postId: postId },
+        where: { postId },
       });
       return deletedPost;
     } catch (error) {
@@ -220,5 +312,66 @@ export class PostRepository {
     } catch (error) {
       throw new DBError("DB 접근 중 에러 발생", error);
     }
+  }
+  async findPostsByTitleOrContent(query: string, userId: number) {
+    return await prisma.post.findMany({
+      where: {
+        OR: [{ title: { contains: query } }, { content: { contains: query } }],
+      },
+      select: {
+        postId: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        // 좋아요 개수
+        _count: {
+          select: {
+            likedBy: true, // 좋아요 개수
+            comments: true, // 댓글 개수
+          },
+        },
+        // 내가 좋아요를 눌렀는지 여부
+        likedBy: {
+          where: {
+            userId: userId,
+          },
+        },
+      },
+    });
+  }
+
+  async findPostsByTag(tagName: string, userId: number) {
+    return await prisma.post.findMany({
+      where: {
+        postTags: {
+          some: {
+            tag: {
+              name: tagName,
+            },
+          },
+        },
+      },
+      select: {
+        postId: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        // 좋아요 개수
+        _count: {
+          select: {
+            likedBy: true, // 좋아요 개수
+            comments: true, // 댓글 개수
+          },
+        },
+        // 내가 좋아요를 눌렀는지 여부
+        likedBy: {
+          where: {
+            userId: userId,
+          },
+        },
+      },
+    });
   }
 }
