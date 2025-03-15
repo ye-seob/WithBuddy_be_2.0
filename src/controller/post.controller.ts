@@ -11,6 +11,7 @@ import {
 
 const postService = new PostService();
 
+// 글 생성
 export const createPostController = async (
   req: Request,
   res: Response,
@@ -28,7 +29,13 @@ export const createPostController = async (
 
     // DTO
     const createPostData = toCreatePostDTO({ userId, ...req.body });
-
+    /*{
+        "userId" : 1,
+        "title" : "제목",
+        "content" : "내용",
+        "postTags" : ["#운동","#코딩"] // nullable
+      }   
+     */
     // 서비스 계층 호출
     const post = await postService.createPost(createPostData);
 
@@ -229,6 +236,36 @@ export const unLikePostController = async (
     const unLike = await postService.unlikePost(data);
 
     res.status(StatusCodes.OK).success(unLike);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+export const searchPostsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user?.id;
+
+  try {
+    if (!userId) {
+      throw new TokenError(
+        "잘못된 토큰 값입니다.",
+        "입력 값: " + req.headers.authorization
+      );
+    }
+    const query = req.query.query;
+
+    if (typeof query !== "string") {
+      throw new InvalidInputError(
+        "검색할 단어나 해시태그를 입력해주세요",
+        query
+      );
+    }
+    const posts = await postService.searchPosts(query, userId);
+
+    res.status(StatusCodes.OK).success(posts);
   } catch (error) {
     console.error(error);
     next(error);

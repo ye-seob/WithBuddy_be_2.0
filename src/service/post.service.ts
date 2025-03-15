@@ -22,7 +22,7 @@ export class PostService {
 
   //  글 생성
   async createPost(data: CreatePostDTO) {
-    // 유효성 검사
+    // 유저 조회
     const user = await this.userRepository.findUserById(data.userId);
 
     if (!user) {
@@ -31,19 +31,28 @@ export class PostService {
 
     const newPost = await this.postRepository.createPost(data);
 
+    // 태그가 존재한다면
+    if (data.postTags) {
+      await this.postRepository.createPostTags({
+        postId: newPost.postId,
+        postTags: data.postTags,
+      });
+    }
+
     return newPost;
   }
 
   // 글 목록 조회
   async getPostList(data: GetPostListDTO) {
-    // 유효성 검사
+    // 유저 조회
     const user = await this.userRepository.findUserById(data.userId);
 
     if (!user) {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
 
-    let orderBy: any = { createdAt: "desc" }; // 기본값: 최신순
+    // 기본값: 최신순
+    let orderBy: any = { createdAt: "desc" };
 
     if (data.sortBy === "댓글순") {
       orderBy = { comments: { _count: "desc" } };
@@ -55,6 +64,10 @@ export class PostService {
 
     // 게시글 목록 조회
     const posts = await this.postRepository.findPostList(data, orderBy);
+
+    for (const post of posts) {
+      post.likedBy;
+    }
 
     return posts;
   }
@@ -104,24 +117,31 @@ export class PostService {
       throw new InvalidInputError("해당 유저가 쓴 글이 아닙니다", data);
     }
 
+    await this.postRepository.updatePostTags({
+      postId: data.postId,
+      postTags: data.postTags!,
+    });
+
     return await this.postRepository.updatePost(data);
   }
 
   // 글 삭제
   async deletePost(data: UserPostDTO) {
-    // 유효성 검사
+    // 유저 조회
     const user = await this.userRepository.findUserById(data.userId);
 
     if (!user) {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
 
+    // 글 조회
     const post = await this.postRepository.findPostById(data.postId);
 
     if (!post) {
       throw new InvalidInputError("존재하지 않는 글입니다", data.postId);
     }
 
+    // 유저가 쓴 글이 맞는지 확인
     const isOwner = await this.postRepository.isPostOwner(data);
 
     if (!isOwner) {
@@ -177,5 +197,15 @@ export class PostService {
     }
 
     return await this.postRepository.removeLike(data);
+  }
+
+  async searchPosts(query: string, userId: number) {
+    // #으로 시작한다면 태그이므로
+    if (query.startsWith("#")) {
+      // 태그 검색
+      return await this.postRepository.findPostsByTag(query, userId);
+    }
+    // 아니면 일반 검색
+    return await this.postRepository.findPostsByTitleOrContent(query, userId);
   }
 }
