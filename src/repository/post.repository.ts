@@ -25,7 +25,7 @@ export class PostRepository {
       throw new DBError("DB 접근 중 에러 발생", error);
     }
   }
-  //
+  // 글에대한 태그 생성
   async createPostTags(data: { postId: number; postTags: string[] }) {
     try {
       return await prisma.$transaction(async (tx) => {
@@ -102,7 +102,6 @@ export class PostRepository {
           title: true,
           content: true,
           createdAt: true,
-
           _count: {
             select: {
               comments: true,
@@ -317,6 +316,8 @@ export class PostRepository {
       throw new DBError("DB 접근 중 에러 발생", error);
     }
   }
+
+  // 검색
   async findPostsByTitleOrContent(query: string, userId: number) {
     return await prisma.post.findMany({
       where: {
@@ -345,6 +346,7 @@ export class PostRepository {
     });
   }
 
+  //태그 검색
   async findPostsByTag(tagName: string, userId: number) {
     return await prisma.post.findMany({
       where: {

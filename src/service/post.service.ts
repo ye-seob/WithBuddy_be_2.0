@@ -55,13 +55,12 @@ export class PostService {
     let orderBy: any = { createdAt: "desc" };
 
     if (data.sortBy === "댓글순") {
-      orderBy = { comments: { _count: "desc" } };
+      orderBy = [{ comments: { _count: "desc" } }, { createdAt: "desc" }];
     }
 
     if (data.sortBy === "공감순") {
-      orderBy = { likedBy: { _count: "desc" } };
+      orderBy = [{ likedBy: { _count: "desc" } }, { createdAt: "desc" }];
     }
-
     // 게시글 목록 조회
     const posts = await this.postRepository.findPostList(data, orderBy);
 
@@ -152,6 +151,7 @@ export class PostService {
     return await this.postRepository.deletePost(data.postId);
   }
 
+  // 내 글 조회
   async getMyPosts(userId: number) {
     // 유효성 검사
     const user = await this.userRepository.findUserById(userId);
@@ -163,6 +163,7 @@ export class PostService {
     return await this.postRepository.findPostByUserId(userId);
   }
 
+  // 글 좋아요
   async likePost(data: UserPostDTO) {
     const post = await this.postRepository.findPostById(data.postId);
 
@@ -193,6 +194,7 @@ export class PostService {
     return await this.postRepository.removeLike(data);
   }
 
+  // 검색
   async searchPosts(query: string, userId: number) {
     // #으로 시작한다면 태그이므로
     if (query.startsWith("#")) {
