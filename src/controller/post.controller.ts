@@ -81,6 +81,7 @@ export const getPostListController = async (
   }
 };
 
+// 글 상세 조회
 export const getPostDeatailController = async (
   req: Request,
   res: Response,
@@ -97,7 +98,9 @@ export const getPostDeatailController = async (
       );
     }
 
-    const postDetail = await postService.getPostDetail({ userId, postId });
+    const data = await toUserPostDTO({ userId, postId });
+
+    const postDetail = await postService.getPostDetail(data);
 
     res.status(StatusCodes.OK).success(postDetail);
   } catch (error) {
