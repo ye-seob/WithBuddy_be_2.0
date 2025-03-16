@@ -1,3 +1,6 @@
 {
-  "extends": "@tsconfig/node20/tsconfig.json"
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true // 이 옵션을 추가합니다.
+  }
 }
