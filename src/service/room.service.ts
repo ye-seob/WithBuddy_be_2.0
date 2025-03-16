@@ -1,9 +1,9 @@
 import { UserRoomDTO } from "../dto/chat.dto.js";
 import { RoomRepository } from "../repository/room.repository.js";
+import { NotificationRepository } from "../repository/notification.repository.js";
 
 export class RoomService {
   private roomRepository: RoomRepository;
-
   constructor() {
     this.roomRepository = new RoomRepository();
   }

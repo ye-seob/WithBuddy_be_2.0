@@ -38,6 +38,14 @@ export const createPostController = async (
      */
     // 서비스 계층 호출
     const post = await postService.createPost(createPostData);
+    /*const post: {
+    postId: number;
+    userId: number;
+    title: string;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date | null;
+} */
 
     res.status(StatusCodes.OK).success(post);
   } catch (error) {

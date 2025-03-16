@@ -6,11 +6,12 @@ import { generateAccessToken, generateRefreshToken } from "../util/jwt.js";
 import { MatchingService } from "../service/matching.service.js";
 import { RoomService } from "../service/room.service.js";
 import { InvalidInputError, TokenError } from "../util/error.js";
+import { NotificationService } from "../service/notification.service.js";
 
 const userService = new UserService();
 const matchingService = new MatchingService();
 const roomService = new RoomService();
-
+const notificationService = new NotificationService();
 // 회원가입
 export const signupController = async (
   req: Request,
@@ -60,6 +61,20 @@ export const signupController = async (
       }, 
      */
 
+    // 매칭된 유저들에게 알림 보내기
+    if (matchParticipants && matchParticipants.matchParticipants.length > 0) {
+      // 새로운 유저를 제외한 기존 유저들의 ID 배열 생성
+      const existingUserIds = matchParticipants.matchParticipants
+        .filter((participant) => participant.userId !== createdUser.userId)
+        .map((participant) => participant.userId);
+
+      // 매칭 알림 전송
+      await notificationService.sendMatchingNotification(
+        createdUser.userId,
+        existingUserIds,
+        createdUser.name
+      );
+    }
     // 그룹 매칭에 아무도 없다면 채팅방 만들 필요 X
     if (matchParticipants) {
       // 개인 채팅방 생성

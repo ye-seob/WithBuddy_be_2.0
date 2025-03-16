@@ -3,6 +3,13 @@ import { UserRoomDTO } from "../dto/chat.dto.js";
 import { DBError } from "../util/error.js";
 
 export class RoomRepository {
+  async findRoomById(roomId: number) {
+    return await prisma.room.findFirst({
+      where: {
+        roomId,
+      },
+    });
+  }
   // 그룹 채팅방 생성
   async createGroupRoom(roomName: string) {
     try {
@@ -91,6 +98,26 @@ export class RoomRepository {
       return participant !== null;
     } catch (error) {
       throw new DBError("DB 접근 중 에러 발생", error);
+    }
+  }
+
+  // 채팅방에 있는 유저들 조회
+  async getUsersInRoom(roomId: number) {
+    try {
+      const users = await prisma.chatParticipant.findMany({
+        where: {
+          roomId,
+        },
+        select: {
+          userId: true,
+        },
+      });
+
+      return users.map((user) => ({
+        userId: user.userId,
+      }));
+    } catch (error) {
+      throw new DBError("DB 접근 중 에러", error);
     }
   }
 }
