@@ -8,7 +8,7 @@ import { toUserMatchingDTO } from "../dto/user.dto.js";
 const matchingService = new MatchingService();
 const userService = new UserService();
 
-// 개인 매칭 조회
+// 개인 매칭 정보 조회
 export const getPersonalMatchingController = async (
   req: Request,
   res: Response,
@@ -33,6 +33,7 @@ export const getPersonalMatchingController = async (
     next(error);
   }
 };
+// 그룹 매칭 정보 조회
 export const getGroupMatchingController = async (
   req: Request,
   res: Response,
@@ -57,6 +58,7 @@ export const getGroupMatchingController = async (
   }
 };
 
+// 매칭된 유저의 상세 정보 조회
 export const getMatchedUserDetailController = async (
   req: Request,
   res: Response,
@@ -75,8 +77,11 @@ export const getMatchedUserDetailController = async (
       loggedInUserId,
     });
 
-    // 해당 유저들끼리 매칭됐는지 확인
-    await matchingService.checkingMatching(checkingMatchingData);
+    // 본인이 아니라면 매칭 확인
+    if (loggedInUserId !== targetUserId) {
+      // 해당 유저들끼리 매칭됐는지 확인
+      await matchingService.checkingMatching(checkingMatchingData);
+    }
 
     // 매칭이 안 됐다면 에러 발생으로 다음 코드 실행 X
 
