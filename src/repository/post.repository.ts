@@ -102,11 +102,7 @@ export class PostRepository {
           title: true,
           content: true,
           createdAt: true,
-          likedBy: {
-            where: {
-              userId: data.userId,
-            },
-          },
+
           _count: {
             select: {
               comments: true,
@@ -122,14 +118,13 @@ export class PostRepository {
   }
 
   // 글 상세 조회
-  async findPostDetailById(postId: number) {
+  async findPostDetailById(data: UserPostDTO) {
     try {
       const post = await prisma.post.findFirst({
         where: {
-          postId,
+          postId: data.postId,
         },
         include: {
-          // 수정
           user: {
             // 작성자 정보
             select: {
@@ -149,6 +144,7 @@ export class PostRepository {
               },
             },
           },
+          // 태그 리턴
           postTags: {
             // 글에 달린 태그
             include: {
@@ -159,8 +155,16 @@ export class PostRepository {
               },
             },
           },
+          // 유저가 좋아요 눌렀는지 확인하기 위함
+          likedBy: {
+            where: {
+              userId: data.userId,
+            },
+          },
+          // 좋아요 개수와 댓글 개수
           _count: {
             select: {
+              comments: true,
               likedBy: true,
             },
           },

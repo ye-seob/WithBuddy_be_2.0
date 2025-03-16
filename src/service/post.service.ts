@@ -65,15 +65,11 @@ export class PostService {
     // 게시글 목록 조회
     const posts = await this.postRepository.findPostList(data, orderBy);
 
-    for (const post of posts) {
-      post.likedBy;
-    }
-
     return posts;
   }
 
   // 글 상세 조회
-  async getPostDetail(data: any) {
+  async getPostDetail(data: UserPostDTO) {
     // 유효성 검사
     const user = await this.userRepository.findUserById(data.userId);
 
@@ -81,9 +77,7 @@ export class PostService {
       throw new InvalidInputError("존재하지 않는 유저입니다", data.userId);
     }
 
-    const postDetail = await this.postRepository.findPostDetailById(
-      data.postId
-    );
+    const postDetail = await this.postRepository.findPostDetailById(data);
 
     if (!postDetail) {
       throw new InvalidInputError("존재하지 않는 글입니다", data.postId);
