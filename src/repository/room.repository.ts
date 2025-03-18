@@ -25,11 +25,11 @@ export class RoomRepository {
   }
 
   // 개인 채팅방 생성
-  async createIndividualRoom(studentId: string, otherUserStudentId: string) {
+  async createIndividualRoom(name: string, otherUserName: string) {
     try {
       const room = await prisma.room.create({
         data: {
-          roomName: `${otherUserStudentId}-${studentId}`,
+          roomName: `${otherUserName} & ${name}`,
           RoomType: "INDIVIDUAL",
         },
       });
@@ -118,6 +118,55 @@ export class RoomRepository {
       }));
     } catch (error) {
       throw new DBError("DB 접근 중 에러", error);
+    }
+  }
+
+  async updateIndividualRoomNames(
+    userId: number,
+    oldName: string,
+    newName: string
+  ) {
+    try {
+      // 해당 사용자가 속한 개인 채팅방 찾기
+      const rooms = await prisma.room.findMany({
+        where: {
+          RoomType: "INDIVIDUAL",
+          participants: {
+            some: { userId },
+          },
+        },
+        select: {
+          roomId: true,
+          roomName: true,
+          RoomType: true,
+          createdAt: true,
+          participants: {
+            select: {
+              userId: true,
+              user: { select: { name: true } },
+            },
+          },
+        },
+      });
+
+      // 병렬 처리로 채팅방 이름 변경
+      await Promise.all(
+        rooms.map(async (room) => {
+          const otherParticipant = room.participants.find(
+            (p) => p.userId !== userId
+          );
+          if (!otherParticipant || !otherParticipant.user.name) return;
+
+          const updatedRoomName = `${otherParticipant.user.name} & ${newName}`;
+
+          await prisma.room.update({
+            where: { roomId: room.roomId },
+            data: { roomName: updatedRoomName },
+          });
+        })
+      );
+    } catch (error) {
+      throw new DBError("채팅방 이름 업데이트 중 에러 발생", error);
     }
   }
 }

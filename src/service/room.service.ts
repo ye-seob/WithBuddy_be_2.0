@@ -32,20 +32,20 @@ export class RoomService {
 
   // 개인 채팅방 생성 (회원가입시 호출)
   createIndividualRooms = async (
-    studentId: string,
+    name: string,
     userId: number,
     matchParticipants: any[]
   ) => {
     for (const participant of matchParticipants) {
-      const otherUserStudentId = participant.user.studentId;
+      const otherUserId = participant.user.userId;
 
       // 본인이라면 패스
-      if (otherUserStudentId === studentId) continue;
+      if (otherUserId === userId) continue;
 
       // 개인 채팅방 생성
       const room = await this.roomRepository.createIndividualRoom(
-        studentId,
-        otherUserStudentId
+        name,
+        participant.user.name
       );
 
       // 방 만들걸로 유저와 방 연결
