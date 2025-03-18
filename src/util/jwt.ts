@@ -48,7 +48,7 @@ export const refreshAccessToken = async (
       res.cookie("accessToken", newAccessToken, {
         httpOnly: true, // 브라우저에서 js 접근 불가능
         sameSite: "none", // 크로스 사이트 요청 가능 , secure: true 필수
-        // maxAge: 3 * 60 * 60 * 1000, // 3시간
+        maxAge: 3 * 60 * 60 * 1000, // 3시간
         path: "/", //도메인 내 모든 경로에서 사용 가능.
         secure: true, // HTTPS 연결에서만 쿠키가 전송
       });

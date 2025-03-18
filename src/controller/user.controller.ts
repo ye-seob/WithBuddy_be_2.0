@@ -126,7 +126,7 @@ export const loginController = async (
     res.cookie("accessToken", accessToken, {
       httpOnly: true, // 브라우저에서 js 접근 불가능
       sameSite: "none", // 크로스 사이트 요청 가능 , secure: true 필수
-      // maxAge: 3 * 60 * 60 * 1000, // 3시간
+      maxAge: 3 * 60 * 60 * 1000, // 3시간
       path: "/", //도메인 내 모든 경로에서 사용 가능.
       secure: true, // HTTPS 연결에서만 쿠키가 전송
     });
@@ -134,7 +134,7 @@ export const loginController = async (
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true, // 브라우저에서 js 접근 불가능
       sameSite: "none", // 크로스 사이트 요청 가능 , secure: true 필수
-      //  maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
       path: "/", // 도메인 내 모든 경로에서 사용 가능.
       secure: true, // HTTPS 연결에서만 쿠키가 전송
     });
