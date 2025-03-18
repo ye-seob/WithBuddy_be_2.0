@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "./jwt.js";
-import { InvalidInputError, TokenError } from "./error.js";
-
+import { TokenError } from "./error.js";
+import { Socket } from "socket.io";
+import cookie from "cookie";
 declare global {
   namespace Express {
     interface Response {
@@ -114,5 +115,23 @@ export const jwtAuthMiddleware = (
     next();
   } catch (error) {
     next(error);
+  }
+};
+// 소켓 인증 미들웨어
+export const jwtSocketAuthMiddleware = (socket: Socket, next: Function) => {
+  try {
+    const cookies = cookie.parse(socket.request.headers.cookie || ""); // 쿠키 파싱
+    const token = cookies.accessToken;
+
+    if (!token) {
+      throw new TokenError("토큰이 존재하지 않습니다.", token);
+    }
+
+    // 토큰을 검증하여 디코딩
+    const decoded = verifyToken(token) as { id: number; studentId: string };
+    socket.user = decoded; // 소켓에 사용자 정보를 붙여서 사용할 수 있도록 함
+    next(); // 인증 성공 시 연결 허용
+  } catch (error) {
+    next(new TokenError("잘못된 토큰입니다.", error));
   }
 };

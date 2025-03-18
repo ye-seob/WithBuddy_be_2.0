@@ -12,8 +12,8 @@ export class NotificationService {
     this.notificationRepository = new NotificationRepository();
   }
 
-  // 채팅방에 있는 유저들 토큰 조회
-  async getUserTokensInRoom(roomId: number) {
+  // 채팅방에 있는 유저들 토큰 조회 (보낸 사용자의 토큰 제외)
+  async getUserTokensInRoom(roomId: number, excludeUserId: number) {
     const room = await this.roomRepository.findRoomById(roomId);
 
     if (!room) {
@@ -22,16 +22,21 @@ export class NotificationService {
 
     const usersInRoom = await this.roomRepository.getUsersInRoom(roomId);
 
+    // 현재 메시지를 보낸 사용자를 제외하고 가져오기
+    const userIds = usersInRoom
+      .map((user) => user.userId)
+      .filter((userId) => userId !== excludeUserId);
+
     const tokens =
-      await this.notificationRepository.findFirebaseTokensByUserIds(
-        usersInRoom.map((user) => user.userId)
-      );
+      await this.notificationRepository.findFirebaseTokensByUserIds(userIds);
 
     return tokens;
   }
+
   // 채팅 알림 전송
   async sendPushNotification(userId: number, tokens: string[], body: string) {
     try {
+      console.log("여기가 두번 실행되나요");
       const title = "새로운 메세지가 있습니다";
       const targetUrl = `/`;
 
