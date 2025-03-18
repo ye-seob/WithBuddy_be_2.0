@@ -24,7 +24,7 @@ model User {
   chatParticipants ChatParticipant[]
   messages Message[]
   postLikes PostLike[] 
-
+  firebaseToken FirebaseToken[] 
   @@map("user")
 }
 
@@ -168,4 +168,18 @@ model ChatParticipant {
 
   @@id([userId, roomId])
   @@map("chat_participant")
+}
+
+
+model FirebaseToken {
+  firebaseTokenId         Int   @id @default(autoincrement()) @map("firebase_token_id")
+  userId     Int   @map("user_id")
+  engineValue String   @db.VarChar(255) @map("engine_value")
+  createdAt  DateTime @default(now()) @map("created_at") 
+
+  user  User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+
+  @@unique([userId, engineValue])
+  @@map("firebaseToken")
 }

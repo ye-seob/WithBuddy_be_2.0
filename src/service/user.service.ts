@@ -6,12 +6,14 @@ import {
 } from "../util/error.js";
 import { loginDTO, SignupDTO, UpdateUserDTO } from "../dto/user.dto.js";
 import bcrypt from "bcryptjs";
+import { RoomRepository } from "../repository/room.repository.js";
 
 export class UserService {
   private userRepository: UserRepository;
-
+  private roomRepository: RoomRepository;
   constructor() {
     this.userRepository = new UserRepository();
+    this.roomRepository = new RoomRepository();
   }
 
   // 사용자 생성
@@ -79,20 +81,36 @@ export class UserService {
 
     return userWithoutPin;
   }
+  // 회원 정보 업데이트
   async updateUserInfo(data: UpdateUserDTO) {
     if (data.pin) {
       const hashedPin = await bcrypt.hash(data.pin, 3);
       data.pin = hashedPin;
     }
 
-    const updateUser = await this.userRepository.updateUser(data);
+    // 기존 사용자 정보 가져오기
+    const existingUser = await this.userRepository.findUserById(data.userId);
+
+    if (!existingUser) {
+      throw new NotFoundError("존재하지 않는 회원입니다", data.userId);
+    }
+
+    // 사용자 정보 업데이트
+    const updatedUser = await this.userRepository.updateUser(data);
+
+    // 만약 사용자의 이름이 변경되었다면 채팅방 이름 업데이트
+    if (data.name && data.name !== existingUser.name) {
+      await this.roomRepository.updateIndividualRoomNames(
+        data.userId,
+        existingUser.name,
+        data.name
+      );
+    }
 
     // pin 제외 user 리턴
-    const { pin, ...userWithoutPin } = updateUser;
-
+    const { pin, ...userWithoutPin } = updatedUser;
     return userWithoutPin;
   }
-
   async updatePin(email: string, newPin: string) {
     // 이메일로 유저 조회
     const user = await this.userRepository.findUserByEmail(email);

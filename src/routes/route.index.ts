@@ -5,6 +5,7 @@ import postRoute from "../routes/post.route.js";
 import commentRoute from "../routes/comment.route.js";
 import mailRoute from "../routes/mail.route.js";
 import { refreshAccessToken } from "../util/jwt.js";
+import { saveFirebaseToken } from "../util/token.js";
 
 const router = express.Router();
 
@@ -25,5 +26,8 @@ router.use("/mails", mailRoute);
 
 // 엑세스 토큰 재발급
 router.post("/auth/refresh", refreshAccessToken);
+
+// 기기 등록 , userId와 엔진 밸류
+router.post("/subscribe", saveFirebaseToken);
 
 export default router;
