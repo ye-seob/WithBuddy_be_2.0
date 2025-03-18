@@ -23,7 +23,7 @@ export class ChatController {
   }
 
   private setupSocket(io: Server) {
-    //
+    // jwt 소켓 인증
     io.use(jwtSocketAuthMiddleware);
 
     io.on("connect", (socket: Socket) => {
@@ -31,6 +31,7 @@ export class ChatController {
       // 채팅방 조회
       socket.on("getUserRooms", async () => {
         try {
+          // 유효성 검사
           if (!userId) {
             socket.emit("error", {
               message: "userId가 존재하지 않습니다.",
@@ -49,7 +50,7 @@ export class ChatController {
       });
 
       // 채팅방 참여
-      socket.on("joinRoom", async (data: any) => {
+      socket.on("joinRoom", async (roomId) => {
         try {
           if (!userId) {
             socket.emit("error", {
@@ -59,7 +60,7 @@ export class ChatController {
           }
 
           // DTO
-          const validData: UserRoomDTO = toUserRoomDTO(data);
+          const validData: UserRoomDTO = toUserRoomDTO({ roomId, userId });
 
           // 방과 유저의 유효성 확인
           const isMember = await this.roomService.isUserInRoom(validData);
@@ -86,7 +87,10 @@ export class ChatController {
           }
 
           // DTO
-          const validData: CreateMessageDTO = toCreateMessageDTO(data);
+          const validData: CreateMessageDTO = toCreateMessageDTO({
+            ...data,
+            userId,
+          });
 
           const isMember = await this.roomService.isUserInRoom(validData);
 
@@ -106,6 +110,7 @@ export class ChatController {
               validData.roomId,
               userId // 현재 보낸 사용자 제외
             );
+
           // 푸시 알림 제목과 내용 설정
           const body = `${chatMessage.sender.name}: ${chatMessage.content}`;
 
@@ -129,12 +134,17 @@ export class ChatController {
             });
             return;
           }
-          if (!(await this.roomService.isUserInRoom({ userId, roomId }))) {
-            socket.emit("error", {
-              message: "해당 채팅방에 있는 유저가 아닙니다",
-            });
+
+          const isMember = await this.roomService.isUserInRoom({
+            userId,
+            roomId,
+          });
+
+          if (!isMember) {
+            socket.emit("error", { message: "채팅방에 참여할 수 없습니다." });
             return;
           }
+
           const messages = await this.messageService.getMessages(roomId);
 
           socket.emit("loadMessages", messages);

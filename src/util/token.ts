@@ -12,6 +12,7 @@ export const sendPushAlarm = async (
   engineValues: string[],
   title: string,
   body: string,
+  tag: string,
   targetUrl: string
 ) => {
   const message = {
@@ -20,6 +21,7 @@ export const sendPushAlarm = async (
       notification: {
         title: title,
         body: body,
+        tag: tag,
         data: {
           url: targetUrl,
         },
@@ -29,6 +31,7 @@ export const sendPushAlarm = async (
   try {
     const response = await firebase.messaging().sendEachForMulticast(message);
 
+    // 실패한 토큰이 있을 수 있으니 실행
     await deleteFailedTokens(userId, response, engineValues);
   } catch (error) {
     throw new Error("dja");
@@ -55,6 +58,13 @@ export const saveFirebaseToken = async (
 
     if (!userId) {
       throw new InvalidInputError("userId가 제공되지 않았습니다", userId);
+    }
+
+    const alreadyToken = await notificationRepository.findFirebaseTokenByUserId(
+      userId
+    );
+    if (alreadyToken.length !== 0) {
+      notificationRepository.deleteFirebaseToken(userId);
     }
 
     await notificationRepository.createFirebaseToken(userId, engineValue);

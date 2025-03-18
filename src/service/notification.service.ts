@@ -36,11 +36,11 @@ export class NotificationService {
   // 채팅 알림 전송
   async sendPushNotification(userId: number, tokens: string[], body: string) {
     try {
-      console.log("여기가 두번 실행되나요");
       const title = "새로운 메세지가 있습니다";
+      const tag = "채팅알림";
       const targetUrl = `/`;
 
-      await sendPushAlarm(userId, tokens, title, body, targetUrl);
+      await sendPushAlarm(userId, tokens, title, body, tag, targetUrl);
     } catch (error) {
       throw new Error("푸시 알림 전송 중 오류가 발생했습니다.");
     }
@@ -63,9 +63,10 @@ export class NotificationService {
 
       const title = "새로운 매칭 알림";
       const body = `${newUserName}님과 매칭되었습니다.`;
+      const tag = "매칭 알림";
       const targetUrl = "/";
 
-      await sendPushAlarm(newUserId, tokens, title, body, targetUrl);
+      await sendPushAlarm(newUserId, tokens, title, body, tag, targetUrl);
     } catch (error) {
       throw new Error("매칭 알림 전송 중 오류가 발생했습니다.");
     }
