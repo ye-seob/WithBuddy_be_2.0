@@ -5,7 +5,12 @@ import postRoute from "../routes/post.route.js";
 import commentRoute from "../routes/comment.route.js";
 import mailRoute from "../routes/mail.route.js";
 import { refreshAccessToken } from "../util/jwt.js";
-import { saveFirebaseToken } from "../util/token.js";
+import {
+  deleteFirebaseToken,
+  getFirebaseToken,
+  saveFirebaseToken,
+} from "../util/token.js";
+import { jwtAuthMiddleware } from "../util/middleware.js";
 
 const router = express.Router();
 
@@ -28,6 +33,11 @@ router.use("/mails", mailRoute);
 router.post("/auth/refresh", refreshAccessToken);
 
 // 기기 등록 , userId와 엔진 밸류
-router.post("/subscribe", saveFirebaseToken);
+router.post("/token/subscribe", jwtAuthMiddleware, saveFirebaseToken);
+
+router.delete("/token/delete", jwtAuthMiddleware, deleteFirebaseToken);
+
+//
+router.get("/token", jwtAuthMiddleware, getFirebaseToken);
 
 export default router;
