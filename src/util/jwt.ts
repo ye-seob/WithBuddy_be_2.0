@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
-import { InvalidInputError, TokenError } from "./error.js";
+import { TokenError } from "./error.js";
 dotenv.config();
 
 const SECRET_ACCESS_KEY = process.env.JWT_SECRET_ACCESS_KEY!;
@@ -13,7 +13,7 @@ export const generateAccessToken = (payload: any) => {
 };
 
 export const generateRefreshToken = (payload: any) => {
-  return jwt.sign(payload, SECRET_REFRESH_KEY, { expiresIn: "2d" });
+  return jwt.sign(payload, SECRET_REFRESH_KEY, { expiresIn: "7d" });
 };
 
 export const verifyToken = (token: string) => {

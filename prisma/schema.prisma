@@ -171,6 +171,7 @@ model ChatParticipant {
 }
 
 
+
 model FirebaseToken {
   firebaseTokenId         Int   @id @default(autoincrement()) @map("firebase_token_id")
   userId     Int   @map("user_id")

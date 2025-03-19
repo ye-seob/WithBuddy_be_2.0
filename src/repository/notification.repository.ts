@@ -2,24 +2,6 @@ import { prisma } from "../db.config.js";
 import { DBError } from "../util/error.js";
 
 export class NotificationRepository {
-  // userId와 engineValue로 FirebaseToken 찾기
-  async findFirebaseTokenByUserIdAndEngineValue(
-    userId: number,
-    engineValue: string
-  ) {
-    try {
-      return prisma.firebaseToken.findFirst({
-        where: {
-          userId,
-          engineValue,
-        },
-      });
-    } catch (error) {
-      throw new DBError("DB 접근 중 에러 발생", error);
-    }
-  }
-
-  // FirebaseToken 생성
   async createFirebaseToken(userId: number, engineValue: string) {
     try {
       return prisma.firebaseToken.create({
@@ -34,12 +16,11 @@ export class NotificationRepository {
   }
 
   // FirebaseToken 삭제
-  async deleteFirebaseToken(userId: number, engineValue: string) {
+  async deleteFirebaseToken(userId: number) {
     try {
       await prisma.firebaseToken.deleteMany({
         where: {
           userId,
-          engineValue,
         },
       });
     } catch (error) {

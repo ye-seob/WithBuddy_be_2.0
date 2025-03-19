@@ -30,12 +30,10 @@ const io = new Server(httpServer, {
   },
 });
 
-new ChatController(io);
-
 const PORT = parseInt(process.env.PORT || "3000", 10);
 
 app.use(cookieParser());
-
+new ChatController(io);
 app.use(
   cors({
     origin: [

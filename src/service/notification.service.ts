@@ -12,8 +12,8 @@ export class NotificationService {
     this.notificationRepository = new NotificationRepository();
   }
 
-  // 채팅방에 있는 유저들 토큰 조회
-  async getUserTokensInRoom(roomId: number) {
+  // 채팅방에 있는 유저들 토큰 조회 (보낸 사용자의 토큰 제외)
+  async getUserTokensInRoom(roomId: number, excludeUserId: number) {
     const room = await this.roomRepository.findRoomById(roomId);
 
     if (!room) {
@@ -22,20 +22,25 @@ export class NotificationService {
 
     const usersInRoom = await this.roomRepository.getUsersInRoom(roomId);
 
+    // 현재 메시지를 보낸 사용자를 제외하고 가져오기
+    const userIds = usersInRoom
+      .map((user) => user.userId)
+      .filter((userId) => userId !== excludeUserId);
+
     const tokens =
-      await this.notificationRepository.findFirebaseTokensByUserIds(
-        usersInRoom.map((user) => user.userId)
-      );
+      await this.notificationRepository.findFirebaseTokensByUserIds(userIds);
 
     return tokens;
   }
+
   // 채팅 알림 전송
   async sendPushNotification(userId: number, tokens: string[], body: string) {
     try {
       const title = "새로운 메세지가 있습니다";
+      const tag = "채팅알림";
       const targetUrl = `/`;
 
-      await sendPushAlarm(userId, tokens, title, body, targetUrl);
+      await sendPushAlarm(userId, tokens, title, body, tag, targetUrl);
     } catch (error) {
       throw new Error("푸시 알림 전송 중 오류가 발생했습니다.");
     }
@@ -58,9 +63,10 @@ export class NotificationService {
 
       const title = "새로운 매칭 알림";
       const body = `${newUserName}님과 매칭되었습니다.`;
+      const tag = "매칭 알림";
       const targetUrl = "/";
 
-      await sendPushAlarm(newUserId, tokens, title, body, targetUrl);
+      await sendPushAlarm(newUserId, tokens, title, body, tag, targetUrl);
     } catch (error) {
       throw new Error("매칭 알림 전송 중 오류가 발생했습니다.");
     }
