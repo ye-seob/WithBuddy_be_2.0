@@ -28,12 +28,17 @@ export const sendPushAlarm = async (
       },
     },
   };
+  if (!engineValues || engineValues.length === 0) {
+    return;
+  }
+
   try {
     const response = await firebase.messaging().sendEachForMulticast(message);
 
     // 실패한 토큰이 있을 수 있으니 실행
     await deleteFailedTokens(userId, response, engineValues);
   } catch (error) {
+    console.log(error);
     throw new Error("알림전송 에러");
   }
 };

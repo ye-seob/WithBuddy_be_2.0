@@ -39,9 +39,9 @@ export class NotificationService {
       const title = "새로운 메세지가 있습니다";
       const tag = "채팅알림";
       const targetUrl = `/`;
-
       await sendPushAlarm(userId, tokens, title, body, tag, targetUrl);
     } catch (error) {
+      console.log(error);
       throw new Error("푸시 알림 전송 중 오류가 발생했습니다.");
     }
   }

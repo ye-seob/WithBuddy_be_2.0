@@ -50,7 +50,7 @@ export class ChatController {
       });
 
       // 채팅방 참여
-      socket.on("joinRoom", async (roomId) => {
+      socket.on("joinRoom", async ({ userId, roomId }) => {
         try {
           if (!userId) {
             socket.emit("error", {
@@ -98,6 +98,7 @@ export class ChatController {
             socket.emit("error", { message: "채팅방에 참여할 수 없습니다." });
             return;
           }
+
           // 메시지 저장
           const chatMessage = await this.messageService.saveMessage(validData);
 
@@ -110,10 +111,8 @@ export class ChatController {
               validData.roomId,
               userId // 현재 보낸 사용자 제외
             );
-
           // 푸시 알림 제목과 내용 설정
           const body = `${chatMessage.sender.name}: ${chatMessage.content}`;
-
           //  알림 전송 요청
           await this.notificationService.sendPushNotification(
             validData.userId,
@@ -121,6 +120,7 @@ export class ChatController {
             body
           );
         } catch (error) {
+          console.log(error);
           socket.emit("error", error);
         }
       });
@@ -149,6 +149,7 @@ export class ChatController {
 
           socket.emit("loadMessages", messages);
         } catch (error) {
+          console.log(error);
           socket.emit("error", error);
         }
       });
